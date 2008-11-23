@@ -9,6 +9,9 @@ use POSIX;
 # specify the grid search parameter range
 if (@ARGV == 0) {die(" plot_grid.pl grid-output-files\n");}
 
+# this controls the paper orientation;
+$GMT_PLOT::paper_orient = "-P";
+
 # global plotting pars
 $nrows= 6;
 $ncols= 3;
