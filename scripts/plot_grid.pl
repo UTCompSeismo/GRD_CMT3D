@@ -7,7 +7,12 @@ use GMT_PLOT_SC;
 use POSIX;
 
 # specify the grid search parameter range
-if (@ARGV == 0) {die(" plot_grid.pl grid-output-files\n");}
+if (@ARGV == 0 or @ARGV < 2) {die(" plot_grid.pl cmt_file grid-output-files \n");}
+
+$cmt=$ARGV[0];
+if (not -f $cmt) {die("Check $cmt file\n");}
+(undef,undef,$ename)=split(" ",`grep 'event name' $cmt`);
+print "CMT file -- $ename\n";
 
 # this controls the paper orientation;
 $GMT_PLOT::paper_orient = "-P";
@@ -22,13 +27,13 @@ $Bs[0]="WesN"; $Bd[0]="WesN"; $Br[0]="WesN";
 $Bs[-1]="WeSn"; $Bd[-1]="WeSn"; $Br[-1]="WeSn";
 
 # plot size jx/jy, plot origin in xy
-($jx,$jy) = shift_xy("1 1","$ncols $nrows","7  8", \@xy,"0.84 0.84");
+($jx,$jy) = shift_xy("1 1.5","$ncols $nrows","7  8", \@xy,"0.84 0.84");
 $JX = "-JX$jx/$jy";
 $GMT_PLOT::paper_orient="-P";
 
 
 # loop over input files
-for ($k=0;$k<@ARGV;$k++) {
+for ($k=1;$k<@ARGV;$k++) {
 
   $result=$ARGV[$k];
   print " == file = $result \n";
@@ -40,6 +45,9 @@ for ($k=0;$k<@ARGV;$k++) {
   $psfile = "grid_$k.ps";
 
   ($ss,$es,$ns,$ts,$sd,$ed,$nd,$td,$sr,$er,$nr,$tr,$min0,$max0,@array) = pick_ds_dd_dr($result,$nrows);
+  # LQY -- hard-wire this maximum color control
+  if ($max0 > 100*$min0) {$max0=100*$min0;}
+
   $j=0;
   @as=@array[$j..$j+$ns-1]; $j+=$ns;
   @ad=@array[$j..$j+$nd-1]; $j+=$nd;
@@ -49,7 +57,7 @@ for ($k=0;$k<@ARGV;$k++) {
   @pr=@array[$j..$j+$nrows-1]; $j+=$nrows;
 
   print "s,d,r=$ss,$es,$ns,$ts,  $sd,$ed,$nd,$td,  $sr,$er,$nr,$tr\n";
-  print "min/max=$min0,$max0\n";
+  print "min/max=$min0/$max0\n";
   print "as=@as\nad=@ad\nar=@ar\n";
   print "ps=@ps\npd=@pd\npr=@pr\n";
 
@@ -72,10 +80,10 @@ for ($k=0;$k<@ARGV;$k++) {
 
   # plot position of the text for dip-rake, strike-rake, and strike-dip plot
   @pos= ("$ad[1] $ar[-2]","$as[1] $ar[-2]","$as[1] $ad[-2]");
-  $arr=$ar[-1]+$ddr*1.1;
+  $arr=$ar[-1]+$ddr*2; # position for title
   $pp="$as[$nrows/2] $arr";
 
-  print CSH "makecpt -T$min/$max/$db2 -Crainbow -Z -I> temp.cpt \n";
+  print CSH "makecpt -T$min/$max/$db2 -Cseis -Z -I > temp.cpt \n";
 
   plot_psxy(\*CSH,$psfile,"$JX -K -X0 -Y0","");
 
@@ -100,12 +108,12 @@ for ($k=0;$k<@ARGV;$k++) {
       print CSH "grdimage out.grd $R[$i] -JX $B -Ctemp.cpt -K -O -P >> $psfile \n";
       print CSH "grdcontour out.grd -R -JX -K -O -P $A>> $psfile\n";
       plot_pstext(\*CSH,$psfile,"-JX -W255 ","$pos[$i] 8 0 4 LT $name[$i]=$value");
-      if ($i==1 and $j==0) {plot_pstext(\*CSH,$psfile,"-JX -W255 -N","$pp 9 0 4 LT title");}
+      if ($i==1 and $j==0) {plot_pstext(\*CSH,$psfile,"-JX -W255 -N","$pp 14 0 4 LT $ename");}
       plot_psxy(\*CSH,$psfile,"-JX -X-$x -Y-$y","");
       print CSH "\n";
     }
   }
-print CSH "psscale -Ctemp.cpt -D4i/0.7i/2.5i/0.17h $db -K -O -V -P >> $psfile\n";
+print CSH "psscale -Ctemp.cpt -D4i/1.0i/2.5i/0.17h $db -K -O -V -P >> $psfile\n";
 plot_psxy(\*CSH,$psfile,"$JX -O","");
 close(CSH);
 
@@ -124,6 +132,7 @@ sub pick_ds_dd_dr {
   close(FILE);
   %nns=(); %nnd=(); %nnr=(); @ps=(); @pd=(); @pr=();
   ($ss,$es,$sd,$ed,$sr,$er,$min,$max) = split(" ",`minmax -C $file`);
+
   for $line (@lines) {
     ($s,$d,$r,$v) = split(" ",$line);
     if ($v == $min) {$mins=$s;$mind=$d;$minr=$r;}
@@ -136,6 +145,8 @@ sub pick_ds_dd_dr {
   @ad=sort { $a <=> $b } keys %nnd;
   @ar=sort { $a <=> $b } keys %nnr;
   $ts=$as[1]-$as[0]; $td=$ad[1]-$ad[0]; $tr=$ar[1]-$ar[0];
+  if ($nrows > @as or $nrows > @ad or $nrows > @ar) {
+      die("Choose a smaller nrows to be in accordance with ns,nd,nr\n");}
 
   $nleft=floor($nrows/2);
   $nright=$nrows-$nleft;
@@ -143,12 +154,16 @@ sub pick_ds_dd_dr {
   $is=int(($mins-$ss)/$ts); $id=int(($mind-$sd)/$td); $ir=int(($minr-$sr)/$tr);
 
   for ($i=-$nleft;$i<$nright;$i++) {
-    @ps=(@ps,$as[$is+$i*$ns1]);
-    @pd=(@pd,$ad[$id+$i*$nd1]);
-    @pr=(@pr,$ar[$ir+$i*$nr1]);
+    if ($is+$i*$ns1 >= @as) {$iss=$is+$i*$ns1-@as;} else {$iss=$is+$i*$ns1;}
+    if ($id+$i*$nd1 >= @ad) {$idd=$id+$i*$nd1-@ad;} else {$idd=$id+$i*$nd1;}
+    if ($ir+$i*$nr1 >= @ar) {$irr=$ir+$i*$nr1-@ar;} else {$irr=$ir+$i*$nr1;}
+  
+    @ps=(@ps,$as[$iss]);
+    @pd=(@pd,$ad[$idd]);
+    @pr=(@pr,$ar[$irr]);
   }
 
-#  print "ps=@ps\npd=@pd\npr=@pr\n";
   return ($ss,$es,$ns,$ts,$sd,$ed,$nd,$td,$sr,$er,$nr,$tr,$min,$max,@as,@ad,@ar,@ps,@pd,@pr);
+
 
 }

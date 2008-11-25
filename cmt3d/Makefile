@@ -23,8 +23,7 @@ $(CMT_SRC) : $(CMT_SRC).f90 $(CMT_OBJ)
 	$(F90) -o $(BIN_DIR)/$@ $(F90_FLAGS) $@.f90 -I $(MOD_DIR) $(CMT_OBJ) $(LIB)
 
 $(CMT_F90_OBJ): $(OBJ_DIR)/%.o : %.f90
-	$(F90) -o $@ $(F90_FLAGS) -c $*.f90 -I $(MOD_DIR) 
-#	@ \mv -f *.mod $(MOD_DIR)
+	$(F90) -o $@ $(F90_FLAGS) -c $*.f90 -I $(MOD_DIR) -J$(MOD_DIR)
 
 $(CMT_F77_OBJ): $(OBJ_DIR)/%.o : %.f
 	$(F77) -o $@ $(F77_FLAGS) -c $*.f 

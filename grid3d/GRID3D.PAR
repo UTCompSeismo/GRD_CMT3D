@@ -3,7 +3,7 @@ CMTSOLUTION
 flexwin.out
 .true.                         -- weigh_data_files
 2 2 1  0  1.15 0.55 0.78       -- weights of data comp, az(exp), dist(exp)
-.true.                         -- station_correction
+.true.  6.0                       -- station_correction
 .false. 3                      -- global_search, ncalc (=1 if local search)
 0 180 10
 0 90 10

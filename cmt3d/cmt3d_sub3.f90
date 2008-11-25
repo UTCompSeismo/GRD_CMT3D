@@ -152,66 +152,6 @@ module cmt3d_sub3
 
   end subroutine gaussian_elimination
 
-!==========================================================================
-
-  subroutine xcorr_calc(d,s,npts,i1,i2,ishift,cc_max)
-
-  ! borrowed from Alessia Maggi's flexwin
-  ! inputs:
-  ! s(npts) = synthetic
-  ! d(npts) = data (or observed)
-  ! i1, i2 = start and stop indexes of window within s and d 
-  
-  double precision, dimension(*), intent(in) :: s,d
-  integer, intent(in) :: npts, i1, i2
-
-  ! outputs:
-  ! ishift = index lag (d-s) for max cross correlation
-  ! cc_max = maximum of cross correlation (normalised by sqrt(synthetic*data))
-  integer, intent(out) :: ishift
-  double precision, intent(out) :: cc_max
-
-  ! local variables
-  integer :: nlen
-  integer :: i_left, i_right, i, j, id_left, id_right
-  double precision :: cc, norm
-
-  ! initialise shift and cross correlation to zero
-  ishift = 0
-  cc_max = 0.0d0
-
-  if (i1.lt.1 .or. i1.gt.i2 .or. i2.gt.npts) then
-    write(*,*) 'Error with window limits: i1, i2, npts ', i1, i2, npts
-    return
-  endif
-
-  ! length of window (number of points, including ends)
-  nlen = i2 - i1 + 1
-
-  ! left and right limits of index (time) shift search
-  ! NOTE: This looks OUTSIDE the time window of interest to compute TSHIFT and CC.
-  !       THIS IS A VERY IMPORTANT DECISION!
-  i_left = -1*int(nlen/2.0)
-  i_right = int(nlen/2.0)
-
-  ! i -> shift (to be applied to DATA (d) in cc search) 
-  do i = i_left, i_right
-    cc = 0.
-    id_left = max(1,i1+i)     ! left-most point on the data that will be treated
-    id_right = min(npts,i2+i) ! right-most point on the data that will be treated
-    norm = sqrt(sum(s(i1:i2)*s(i1:i2)) * sum(d(id_left:id_right)*(d(id_left:id_right))))
-    do j = i1, i2 
-      if((j+i).ge.1 .and. (j+i).le.npts) cc = cc + s(j)*d(j+i)
-    enddo
-    cc = cc/norm
-    if (cc .gt. cc_max) then
-      cc_max = cc
-      ishift = i
-    endif
-  enddo
-
-end subroutine xcorr_calc
-
-!------------------------------------------------------------------------
+!===========================================================
 
 end module cmt3d_sub3

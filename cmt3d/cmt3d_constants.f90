@@ -46,6 +46,7 @@ module cmt3d_constants
 ! small numbers
   real*8, parameter :: EPS2 = 1.0d-2
   real*8, parameter :: EPS5 = 1.0d-5
+  real, parameter :: SMALL = -huge(1.0)
 
 ! io unit for parameter files
   integer, parameter :: IOPAR = 40
@@ -63,7 +64,7 @@ module cmt3d_constants
   integer, parameter :: NREGIONS = 10
 
 ! reference distance for Pnl, Rayleigh and Love wave weighting
-  real*8, parameter :: REF_DIST = 100.0
+  real, parameter :: REF_DIST = 100.0
 
 
 end module cmt3d_constants

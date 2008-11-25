@@ -7,7 +7,7 @@ contains
 
   !==========================================================================
 
-  subroutine xcorr_calc(dd,ss,npts,i1,i2,ishift,cc_max)
+  subroutine xcorr_calc(dd,ss,npts,i1,i2,ishift,cc_max,ishift_max)
 
     ! the core of Alessia's version
 
@@ -15,6 +15,7 @@ contains
     integer, intent(in) :: npts, i1, i2
     integer, intent(out) :: ishift
     real,intent(out) :: cc_max
+    integer,intent(in) :: ishift_max
 
     ! local variables
     real,dimension(npts) :: d,s
@@ -27,7 +28,7 @@ contains
     ishift = 0; cc_max = SMALL
 
     ! length of window (number of points, including ends)
-    nlen = i2 - i1 + 1
+    nlen = min(i2 - i1 + 1,ishift_max * 2)
 
     i_left = -1*int(nlen/2.0)
     i_right = int(nlen/2.0)

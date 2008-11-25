@@ -23,8 +23,10 @@ contains
     read(IOPAR,'(a)') new_cmt_file
     read(IOPAR,*) npar
     read(IOPAR,*) ddelta,ddepth,dmoment
-    dcmt_par = (/dmoment,dmoment,dmoment, dmoment,dmoment,dmoment,&
-         ddepth,ddelta,ddelta, SCALE_CTIME,SCALE_HDUR/) / SCALE_PAR
+    dcmt_par = (/dble(dmoment),dble(dmoment),dble(dmoment), &
+                 dble(dmoment),dble(dmoment),dble(dmoment),&
+                 dble(ddepth),dble(ddelta),dble(ddelta), &
+                 SCALE_CTIME,SCALE_HDUR/) / SCALE_PAR
 
     read(IOPAR,'(a)') flexwin_out_file
 
@@ -116,7 +118,7 @@ contains
        read(IOWIN,'(a)') syn_file
        read(IOWIN,*) nwins(i)
        if (nwins(i) < 0) stop 'Check nwins(i) '
-       print *, trim(data_file), ' ', trim(syn_file)
+!       if (DEBUG) print *, trim(data_file), ' ', trim(syn_file)
        nwin_total = nwin_total + nwins(i)
        do j = 1, nwins(i)
           read(IOWIN,*) tstart, tend
@@ -147,7 +149,7 @@ contains
     real*8, intent(out) :: A(npar,npar), b(npar)
 
     integer :: ios,nf,nw,nwint,i,j
-    real*8 :: tstart, tend, tshift
+    real :: tstart, tend
     real*8 :: A1(npar,npar), b1(npar)
   
     open(IOWIN,file=trim(flexwin_out_file),iostat=ios)
@@ -182,7 +184,6 @@ contains
        write(*,'(/,a)') ' RHS vector b is as follows...'
        write(*,'(12e12.3)') (sngl(b(j)),j=1,npar)
     endif
-
 
 
   end subroutine setup_matrix
@@ -303,8 +304,11 @@ contains
     real*8,intent(in) :: dm(npar)
 
     integer :: ios, nf, nwint, nw,  is, ie, i, j, npts, ishift, ishift_new
-    real*8 :: b, dt, tstart, tend, tshift, cc, dlna, var, &
-         tshift_new,cc_new,dlna_new,var_new
+    real :: b, dt, tstart, tend
+    real :: tshift, cc, dlna, v1, v2, tshift_new,cc_new,dlna_new,d1,d2
+    real :: var_all, var_all_new
+    integer :: istart, iend, istart_d, iend_d
+    integer :: istart_n, iend_n, istart_dn, iend_dn
     
 
     open(IOWIN,file=trim(flexwin_out_file),iostat=ios)
@@ -315,7 +319,7 @@ contains
     read(IOWIN,*) nf
     write(IOINV,*) nf
 
-    nwint = 0
+    nwint = 0; var_all = 0.; var_all_new = 0.
     do i = 1, nf
        read(IOWIN,'(a)') data_file
        read(IOWIN,'(a)') syn_file
@@ -330,26 +334,37 @@ contains
           read(IOWIN,*) tstart, tend
           is=max(floor((tstart-b)/dt),1)
           ie=min(ceiling((tend-b)/dt),npts)
-          call calc_criteria(data,syn,npts,is,ie,dt,tshift,cc,dlna)
-          call calc_criteria(data,new_syn,npts,is,ie,dt,tshift_new,cc_new,dlna_new)
+
           if (station_correction) then
-             ishift=int(tshift/dt)
-             ishift_new=int(tshift_new/dt)
-             var=sum((syn(is:ie)-data(is+ishift:ie+ishift))**2)/sum(data(is:ie)**2)
-             var_new=sum((new_syn(is:ie)-data(is+ishift_new:ie+ishift_new))**2)/sum(data(is:ie)**2)
+             call calc_criteria(data_sngl,syn_sngl,npts,is,ie,ishift,cc,dlna)
+             call calc_criteria(data_sngl,new_syn_sngl,npts,is,ie,ishift_new,cc_new,dlna_new)
+             istart_d=max(1,is+ishift); iend_d=min(npts,ie+ishift)
+             istart_dn=max(1,is+ishift_new); iend_dn=min(npts,ie+ishift_new)
+             istart=istart_d-ishift; iend=iend_d-ishift
+             istart_n=istart_dn-ishift_new; iend_n=iend_dn-ishift_new
           else
-             var=sum((syn(is:ie)-data(is:ie))**2)/sum(data(is:ie)**2)
-             var_new=sum((new_syn(is:ie)-data(is:ie))**2)/sum(data(is:ie)**2)
+             istart_d=is; istart=is; iend_d=ie; iend=ie
+             istart_dn=is; istart_n=is; iend_dn=ie; iend_n=ie
           endif
+             
+          v1=sum((syn_sngl(istart:iend)-data_sngl(istart_d:iend_d))**2)
+          v2=sum((new_syn_sngl(istart_n:iend_n)-data_sngl(istart_dn:iend_dn))**2)
+          d1=sum(data_sngl(istart_d:iend_d)**2)
+          d2=sum(data_sngl(istart_dn:iend_dn)**2)
+          var_all = var_all + v1*data_weights(nwint)*dt
+          var_all_new = var_all_new + v2*data_weights(nwint)*dt
+
           write(IOINV,'(3g15.5)') tstart,tend,data_weights(nwint)
-          write(IOINV,'(3x,4g15.5)') tshift, cc, dlna, var
-          write(IOINV,'(3x,4g15.5)') tshift_new, cc_new, dlna_new, var_new
+          write(IOINV,'(3x,4g15.5)') ishift*dt, cc, dlna, v1/d1
+          write(IOINV,'(3x,4g15.5)') ishift_new*dt, cc_new, dlna_new, v2/d2
        enddo
     enddo
     close(IOWIN)
     close(IOINV)
 
     if (nwint /= nwin_total) stop 'Check nwin_total in variance reduction'
+    print *, 'Total Variance reduced from ', var_all, ' to ', var_all_new, &
+         ' = ', (var_all-var_all_new)/var_all*100, ' %'
 
   end subroutine variance_reduction
 

@@ -18,7 +18,7 @@ module grid3d_variables
   ! grid search scheme
   logical :: station_correction,global_search
   integer :: ncalc
-  real ::  s_strike,e_strike,d_strike,s_dip,e_dip,d_dip,  &
+  real ::  tshift_max,s_strike,e_strike,d_strike,s_dip,e_dip,d_dip,  &
        s_rake,e_rake,d_rake,s_mw,e_mw,d_mw
 
   ! misc

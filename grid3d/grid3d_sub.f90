@@ -27,7 +27,7 @@ contains
          az_exp_weight, &
          pnl_dist_weight, rayleigh_dist_weight, love_dist_weight
 
-    read(IOPAR,*) station_correction
+    read(IOPAR,*) station_correction, tshift_max
     read(IOPAR,*) global_search, ncalc
     if (.not. global_search) then
        ncalc = 1
@@ -55,7 +55,7 @@ contains
        ! these are global search control parameters -- can be adjusted
        ! 19x10x13x5
        s_strike = 0; e_strike = 180; d_strike = 10
-       s_dip = 0; e_dip = 90; d_dip = 10
+       s_dip = 0; e_dip = 90;  d_dip = 10
        s_rake = -180; e_rake = 180; d_rake = 30
        s_mw = mw * 0.9; e_mw = mw * 1.1; d_mw = mw * 0.05
        t_strike=1.5; t_dip=1.5; t_rake=1.5; t_mw=1
@@ -87,6 +87,11 @@ contains
        endif
        if (station_correction) then
           write(*,*) 'shift data to aligh with synthetics before grid search'
+          if (tshift_max > 0) then
+            write(*,'(a,g15.5)') '  with maximum shift allowed', tshift_max
+          else 
+            stop 'tshift_max should be > 0'
+          endif
        else
           write(*,*) 'data are NOT shifted before grid search'
        endif

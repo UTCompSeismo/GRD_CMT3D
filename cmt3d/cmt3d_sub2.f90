@@ -42,7 +42,7 @@ contains
     npts = min(npts1, npts2)
 
     ! DEBUG
-    if (DEBUG) write(*,*) 'DEBUG : b, dt, npts ', b, dt, npts
+!    if (DEBUG) write(*,*) 'DEBUG : b, dt, npts ', b, dt, npts
 
     ! read event and station header parameters from observation file
     call getfhv('evla', evla, nerr)
@@ -60,8 +60,8 @@ contains
          stop 'We only deal with Z, R, and T components at the moment'
 
     ! CHT: why does this output as:  FMP     BHR      CI(013, 064)?
-    if (DEBUG) write(*,'(a, a,a,a)') '       sta, cmp, net    ', &
-         trim(kstnm), trim(kcmpnm), trim(knetwk)
+!    if (DEBUG) write(*,'(a, a,a,a)') '       sta, cmp, net    ', &
+!         trim(kstnm), trim(kcmpnm), trim(knetwk)
 
     ! calculate distances and azimuths (needs testing)
     call distaz(evla,evlo,stla,stlo,azimuth,backazimuth,dist_deg,dist_km)
@@ -76,12 +76,12 @@ contains
 
     character*8, dimension(:),intent(in) :: kcmpnm
     real, dimension(:), intent(in) :: azimuth, dist_km
-    real*8,intent(out) :: data_weights(NWINMAX)
+    real,intent(out) :: data_weights(NWINMAX)
 
     real :: daz
     integer :: naz(NREGIONS), nwint, i, j, k
     character(len=8) :: comp_name
-    real*8 :: cmp_weight(NWINMAX), dist_exp_weight(NWINMAX),max_data_weight
+    real :: cmp_weight(NWINMAX), dist_exp_weight(NWINMAX),max_data_weight
 
 
     daz = 360./NREGIONS
@@ -147,17 +147,17 @@ contains
   subroutine compute_A_b(syn_file,data_file,data_weight,tstart,tend,A1,b1,npar)
 
     character(len=*),intent(in) :: syn_file, data_file
-    real*8,intent(in) :: data_weight, tstart, tend
+    real,intent(in) :: data_weight, tstart, tend
     real*8, intent(out),dimension(:,:) :: A1
     real*8, intent(out),dimension(:) :: b1
     integer, intent(in) :: npar
 
     real :: t0, dt, t0_1, dt1
     integer :: npts, npts1, npts2, nerr,istart,iend, nshift
-    integer :: i, j, istart_d, iend_d
+    integer :: i, j, istart_d, iend_d, istart_s, iend_s
     real, dimension(NDATAMAX,NPARMAX) :: dsyn_sngl
     character(len=150) :: dsyn_file
-    real*8 :: dtt, tshift, dlna, cc
+    real :: dlna, cc
 
 
     ! read in data, syn
@@ -171,17 +171,15 @@ contains
     if (istart >= iend) stop 'Check tstart and tend'
 
     if (station_correction) then
-       data(1:npts) = dble(data_sngl(1:npts))
-       syn(1:npts) = dble(syn_sngl(1:npts))
-       dtt = dble(dt)
        ! matching syn(is:ie) with data(is+it:ie+it)
-       call calc_criteria(data,syn,npts,istart,iend,dtt,tshift,cc,dlna)
-       nshift = nint(tshift/dt)
-       istart_d = istart + nshift
-       iend_d = iend + nshift
+       call calc_criteria(data_sngl,syn_sngl,npts,istart,iend,nshift,cc,dlna)
+       istart_d = max(1,istart + nshift)
+       iend_d = min(npts,iend + nshift)
+       istart_s=istart_d-nshift
+       iend_s=iend_d-nshift
     else
-       istart_d = istart
-       iend_d = iend
+       istart_d = istart; iend_d = iend
+       istart_s = istart; iend_s = iend
     endif
 
     ! read in dsyns
@@ -200,13 +198,13 @@ contains
           dsyn_sngl(1:npts,i) = (dsyn_sngl(1:npts,i) - syn_sngl(1:npts)) / dcmt_par(i)
        endif
     enddo
-    
+
     ! compute A and b taking into account data_weights
     do j = 1, npar ! col
        do i = 1, j ! row
-          A1(i,j) = data_weight * sum(dsyn_sngl(istart:iend,i)*dsyn_sngl(istart:iend,j))*dble(dt)
+          A1(i,j) = data_weight * sum(dsyn_sngl(istart_s:iend_s,i)*dsyn_sngl(istart_s:iend_s,j))*dble(dt)
        enddo
-       b1(j) = data_weight * sum((data_sngl(istart_d:iend_d)-syn_sngl(istart:iend))*dsyn_sngl(istart:iend,j))*dble(dt)
+       b1(j) = data_weight * sum((data_sngl(istart_d:iend_d)-syn_sngl(istart_s:iend_s))*dsyn_sngl(istart_s:iend_s,j))*dble(dt)
      
     enddo
 
@@ -281,8 +279,8 @@ contains
 
     character(len=*),intent(in):: data_file, syn_file
     integer,intent(out) :: npts
-    real*8 ,intent(out) :: b, dt
-    real*8,intent(in) :: dm(:)
+    real, intent(out) :: b, dt
+    real*8, intent(in) :: dm(:)
 
     real, dimension(NDATAMAX,NPARMAX) :: dsyn_sngl
     real, dimension(NDATAMAX) :: time
@@ -292,19 +290,13 @@ contains
     character*8 :: kstnm,knetwk,kcmpnm
 
     ! read in data, syn
-    call rsac1(data_file,data_sngl,npts1,b1,dt1,NDATAMAX,nerr)
-    call rsac1(syn_file,syn_sngl,npts2,b1,dt1,NDATAMAX,nerr)
+    call rsac1(data_file,data_sngl,npts1,b,dt,NDATAMAX,nerr)
+    call rsac1(syn_file,syn_sngl,npts2,b,dt,NDATAMAX,nerr)
     npts=min(npts1,npts2)
 
     call getkhv('kstnm', kstnm, nerr)
     call getkhv('kcmpnm', kcmpnm, nerr)
     call getkhv('knetwk', knetwk, nerr)
-
-    ! prepare b, dt, data(:), syn(:) for calc_criteria
-    b=dble(b1)
-    dt=dble(dt1)
-    data(1:npts) = dble(data_sngl(1:npts))
-    syn(1:npts) = dble(syn_sngl(1:npts))
 
     ! read in dsyns
     do i = 1, npar
@@ -321,11 +313,10 @@ contains
     enddo
 
     ! update synthetics with linearized relation
-    new_syn(1:npts) = syn(1:npts) + matmul(dsyn_sngl(1:npts,1:npar),dm(1:npar))
+    new_syn_sngl(1:npts) = syn_sngl(1:npts) + matmul(dsyn_sngl(1:npts,1:npar),dm(1:npar))
 
     ! output new synthetics as sac file
     if (write_new_syn) then
-       syn_sngl(1:npts) = sngl(new_syn(1:npts))
        do i = 1, npts
           time(i) = b1 + (i-1)*dt1
        enddo
@@ -333,13 +324,13 @@ contains
        call setkhv('kstnm',trim(kstnm),nerr)
        call setkhv('knetwk',trim(knetwk),nerr)
        call setkhv('kcmpnm',trim(kcmpnm),nerr)
-       call setfhv('b',sngl(b),nerr)
-       call setfhv('delta',sngl(dt),nerr)
+       call setfhv('b',b,nerr)
+       call setfhv('delta',dt,nerr)
        call setnhv('npts',npts,nerr)
        call setihv('iftype','ITIME',nerr)
        call setihv('iztype','IB',nerr)
        call setlhv('leven',1,nerr)
-       call wsac0(trim(syn_file)//'.new',time(1:npts),syn_sngl(1:npts),nerr)
+       call wsac0(trim(syn_file)//'.new',time(1:npts),new_syn_sngl(1:npts),nerr)
        if (nerr .ne. 0) stop 'Error writing new synthetics files'
     endif
 
@@ -347,28 +338,46 @@ contains
 
   ! ===========================================================
 
-  subroutine calc_criteria(d,s,npts,i1,i2,dt,tshift,cc_max,dlnA)
+  subroutine calc_criteria(d,s,npts,i1,i2,ishift,cc_max,dlnA)
 
-    double precision, dimension(*), intent(in) :: d, s
+    real, dimension(*), intent(in) :: d, s
     integer, intent(in) :: npts,i1,i2
-    double precision, intent(in) :: dt
-    double precision, intent(out) ::  tshift,cc_max,dlnA
+    integer, intent(out) :: ishift
+    real, intent(out) ::  cc_max,dlnA
 
-    double precision, dimension(NDATAMAX) :: d_win, s_win
-    integer :: ishift
+    real, dimension(NDATAMAX) :: d_win, s_win
+    real  :: cc,norm
+    integer :: i,i_left,i_right,id_left,id_right,j,nlen
 
     ! do cross-correlation
     ! CHT: zero the data and synthetics outside the window (see comments in xcorr_calc)
     d_win(:) = 0. ; d_win(i1:i2) = d(i1:i2)
     s_win(:) = 0. ; s_win(i1:i2) = s(i1:i2)
-    call xcorr_calc(d_win,s_win,npts,i1,i2,ishift,cc_max)
+    ishift = 0; cc_max = SMALL
 
-    ! cross-correlation time-shift
-    tshift = ishift*dt
+  ! length of window (number of points, including ends)
+    nlen = i2 - i1 + 1
 
-    ! calculate dlnA : definition of Dahlen and Baig (2002), Eq. 3,17,18 : dlnA = Aobs/Asyn - 1
-    ! NOTE 1: these records are unshifted
-    ! NOTE 2: this measurement will reflect any noise in the data, too
+    i_left = -1*int(nlen/2.0)
+    i_right = int(nlen/2.0)
+
+    do i = i_left, i_right
+       id_left = max(1,i1+i)     ! left-most point on the data that will be treated
+       id_right = min(npts,i2+i) ! right-most point on the data that will be treated
+       norm = sqrt(sum(s_win(id_left-i:id_right-i)**2) * sum(d_win(id_left:id_right)**2))
+
+       cc=sum(s_win(id_left-i:id_right-i)*d_win(id_left:id_right))
+
+       cc = cc/norm
+
+       if (cc .gt. cc_max) then
+          cc_max = cc
+          ishift = i
+       endif
+    enddo
+
+    ! calculate dlnA : Dahlen and Baig (2002), 3,17,18 -- dlnA = Aobs/Asyn - 1
+   
     dlnA = sqrt( ( sum( d_win(i1:i2)*d_win(i1:i2) )) / (sum( s_win(i1:i2)*s_win(i1:i2) )) ) - 1.0
 
   end subroutine calc_criteria

@@ -189,7 +189,7 @@ contains
     real,intent(inout) :: misfit(:)
 
     integer :: npts,npts2,nerr,is(nw),ie(nw)
-    integer :: iw,it,id,ir,im,i,j,ishift,iss,iee
+    integer :: iw,it,id,ir,im,i,j,ishift,iss,iee,isd,ied,ishift_max
     real :: b,dt,b2,dt2,cc,t1(nw),tt
     character(len=150) :: dsyn_file
 
@@ -211,13 +211,19 @@ contains
     enddo
 
     ! core computation
-    ishift=0
+    ishift=0; ishift_max=nint(tshift_max/dt)
     do j = 1, n_total
        syn(1:npts) =  matmul(mij(:,j),dsyn(:,1:npts)) / dmoment
        do iw = 1, nw
           tt=t1(iw); iss=is(iw);iee=ie(iw)
-          if (station_correction) call xcorr_calc(data,syn,npts,iss,iee,ishift,cc)
-          misfit(j) = misfit(j)+tt*sum((syn(iss:iee)-data(iss+ishift:iee+ishift))**2)
+          if (station_correction) then
+             call xcorr_calc(data,syn,npts,iss,iee,ishift,cc,ishift_max)
+             isd=max(1,iss+ishift); ied=min(npts,iee+ishift)
+             iss=isd-ishift; iee=ied-ishift
+          else
+             isd=iss; ied=iee
+          endif
+          misfit(j) = misfit(j)+tt*sum((syn(iss:iee)-data(isd:ied))**2)
        enddo
     enddo
 

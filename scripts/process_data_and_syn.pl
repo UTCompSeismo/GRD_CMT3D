@@ -52,8 +52,10 @@ if ($pre_process) {
   if ($opt_a) {$sta_file=$opt_a;} else {die("-a option\n");}
   if (not -f $cmt_file or not -f $sta_file) {die("Check $cmt_file or $sta_file\n");} 
   if ($opt_n) {$nsps="-s $opt_n";} else {$nsps = "-s 20";}
-  (undef,undef, $hdur) = split(" ",`grep half $cmt_file`);
-  if (abs($hdur)<0.1) {die("Check half duration for -h option in syn processing\n");}
+
+# uncomment this if you choose to convolve hdur here
+#  (undef,undef, $hdur) = split(" ",`grep half $cmt_file`);
+#  if (abs($hdur)<0.1) {die("Check half duration for -h option in syn processing\n");}
 }
  
 if ($opt_d) {$dirdat_pp= "${data_dir}_PP";}
