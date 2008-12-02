@@ -118,7 +118,7 @@ contains
        read(IOWIN,'(a)') syn_file
        read(IOWIN,*) nwins(i)
        if (nwins(i) < 0) stop 'Check nwins(i) '
-!       if (DEBUG) print *, trim(data_file), ' ', trim(syn_file)
+       if (DEBUG) print *, trim(data_file), ' ', trim(syn_file)
        nwin_total = nwin_total + nwins(i)
        do j = 1, nwins(i)
           read(IOWIN,*) tstart, tend
@@ -282,6 +282,8 @@ contains
     new_cmt_par(1:npar) = new_par(1:npar) * SCALE_PAR(1:npar)
 
     if (DEBUG) then
+       write(*,'(/,a)') 'Gaussian Elimination gives dm(1:npar) ...'
+       write(*,'(11e15.3)') sngl(dm(1:npar))
        write(*,'(/,a)') ' Output scaled parameters are ...'
        write(*,*)  
        write(*,'(11e15.3,/)') sngl(new_par(1:npar))

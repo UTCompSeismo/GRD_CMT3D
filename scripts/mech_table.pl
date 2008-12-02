@@ -14,7 +14,7 @@ $weigh_data="2 2 1 0.5 1.15 0.55 0.78";
 $weigh_data_nocomp="1 1 1 0.5 1.15 0.55 0.78";
 $weigh_data_noaz="2 2 1 0 1.15 0.55 0.78";
 
-@names=("initial","grid_search","7 Par+ZT", "6 Par+ZT","7 Par+no-SC","7 Par+no-AZ","6 Par+dc","7 Par+DC","7 Par+no-Comp");
+@names=("initial","grid_search","7 Par+ZT", "6 Par+ZT","7 Par+no-SC","7 Par+no-AZ","6 Par+DC","7 Par+DC","7 Par+no-Comp");
 @npars=(6,6, 7, 6,7,7, 6,7,7);
 @wdatas=($weigh_data, $weigh_data, $weigh_data, $weigh_data,$weigh_data,$weigh_data_noaz, $weigh_data,$weigh_data,$weigh_data_nocomp);
 @scorrs=("true","true",".true.",  ".true.", ".false.", ".true.",  ".true.",".true.",".true.");
@@ -32,15 +32,17 @@ $GMT_PLOT::paper_orient="-P";
 
 if (not -f "cmt3d_flexwin") {die("Check if cmt3d_flexwin exists or not\n");}
 
-open(INV,"$inv_file");@all=<INV>;close(INV);
+open(INV,"$inv_file")|| die("check $inv_file\n");
+@all=<INV>;close(INV);
+
 $cmt=$all[0]; $cmt_new=$all[1]; $npar=$all[2]; $delta=$all[3];
 $flex=$all[4];$lwdata=$all[5]; $wdata=$all[6]; $scorr=$all[7]; $con=$all[8];
 $wns=$all[9];
 chomp($cmt_new);chomp($cmt);
 (undef,undef,$ename)=split(" ",`grep 'event name' $cmt`);
 
-@cmt=($cmt);
-if (-f "${cmt}_GRD") {@cmt=(@cmt,"${cmt}_GRD"); print BASH "cp -f ${cmt}_GRD $outdir\n";}
+@cmt=($cmt);@cmt=(@cmt,"${cmt}_GRD");
+if (-f "${cmt}_GRD") {print BASH "cp -f ${cmt}_GRD $outdir\n";}
 for ($i=2;$i<$nbeach;$i++) {@cmt=(@cmt,"CMTSOLUTION.$i");}
 
 open(BASH,">mech_table.bash");
@@ -64,19 +66,21 @@ for ($k=2;$k<$nbeach;$k++) { # cmt3d runs
 }
 close(BASH);
 system("chmod a+x mech_table.bash; mech_table.bash");
-
 for ($k=2;$k<$nbeach;$k++) {
   (@tmp)=split(" ",`grep Variance $outdir/cmt3d_stdout.$k`);
-  $var[$k]=$tmp[8]; print "$k,$var[$k]\n";}
+  $var[$k]=$tmp[8]; print "$k -- VR = $var[$k]\n";}
 #die("here\n");
 
 
 open(BASH,">mech_plot.bash");
+print BASH "gmtset BASEMAP_TYPE plain ANOT_FONT_SIZE 9 HEADER_FONT_SIZE 10 MEASURE_UNIT inch PAPER_MEDIA letter TICK_LENGTH 0.1c\n";
+
 plot_psxy(\*BASH,$psfile,"$JX -K -X0 -Y0 $R","");
 $k=0;
 for ($i=0;$i<$nrows;$i++) {
   for ($j=0;$j<$ncols;$j++) {
-    print BASH "# ---- Mech $k ------\n";
+    print BASH "# ---- Mech $k, $cmt[$k]------\n";
+    print "---- Mech $k, $cmt[$k]------\n";
     $xy=$xy[$i][$j];($x,$y) = split(/\//,$xy);
     plot_psxy(\*BASH,$psfile,"$JX -X$x -Y$y $R","");
     if (-f "$outdir/$cmt[$k]") {

@@ -11,7 +11,7 @@ module grid3d_variables
   ! data selection
   character(len=150) :: flexwin_out_file
   logical :: weigh_data_files
-  real*8 :: comp_z_weight, comp_r_weight, comp_t_weight,&
+  real :: comp_z_weight, comp_r_weight, comp_t_weight,&
        az_exp_weight, &
        pnl_dist_weight, rayleigh_dist_weight, love_dist_weight
 

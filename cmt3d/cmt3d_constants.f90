@@ -27,10 +27,9 @@ module cmt3d_constants
        SCALE_MOMENT, SCALE_MOMENT, SCALE_DEPTH, SCALE_DELTA, SCALE_DELTA, &
         SCALE_CTIME, SCALE_HDUR /)   
 
-  character(len=9), parameter :: PAR_NAME(NPARMAX) =  &
-       (/'Mrr      ','Mtt      ','Mpp      ','Mrt      ','Mrp      ', &
-         'Mtp      ','depth    ','longitude','latitude ', &
-         'ctime    ','hdur     '/)  
+  character(len=3), parameter :: PAR_NAME(NPARMAX) =  &
+       (/'Mrr','Mtt','Mpp','Mrt','Mrp', 'Mtp','dep','lon','lat', &
+         'ctm','hdr'/)  
 ! maximum npts for records
   integer, parameter :: NDATAMAX = 30000
 

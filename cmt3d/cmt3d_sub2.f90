@@ -186,12 +186,14 @@ contains
     do i = 1, npar
        dsyn_file = trim(syn_file) // '.' // trim(PAR_NAME(i))
        ! wierd enough, rsac1 can not detect the non-existence of dsyn_file
+       npts1=0
        call rsac1(dsyn_file,dsyn_sngl(:,i),npts1,t0_1,dt1,NDATAMAX,nerr)
        if (nerr /= 0) stop 'Error reading dsynthetics' 
        if (npts1 /= npts2 .or. abs(t0_1-t0) > EPS2 .or. abs(dt1-dt) > EPS5) then
           print *,  trim(dsyn_file),npts1,t0_1,dt1,'; nerr = ', nerr
           stop 'Check npts, b, dt of the derivative synthetics'
        endif
+
        if (i <= NM) then
           dsyn_sngl(1:npts,i) = dsyn_sngl(1:npts,i) / dcmt_par(i)
        else
