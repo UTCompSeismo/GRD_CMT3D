@@ -199,6 +199,7 @@ contains
     ! read synthetics
     do i = 1, NM
        dsyn_file = trim(syn_file)//'.'//trim(PAR_NAME(i))
+       npts2 = 0
        call rsac1(dsyn_file,dsyn(i,:), npts2,b2,dt2,NDATAMAX,nerr)
        if (abs(b-b2)>dt .or. abs(dt-dt2)>EPS5 .or. npts /= npts2) &
             stop 'Error reading dsyn-file'

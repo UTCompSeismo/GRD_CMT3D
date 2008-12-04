@@ -303,6 +303,7 @@ contains
     ! read in dsyns
     do i = 1, npar
        dsyn_file = trim(syn_file) // '.' // trim(PAR_NAME(i))
+       npts1=0
        call rsac1(dsyn_file,dsyn_sngl(:,i),npts1,b1,dt1,NDATAMAX,nerr)
        if (nerr /= 0) stop 'Error reading frechet derivative synthetics'
        if (npts1 /= npts2 .or. abs(b1-b) > EPS2 .or. abs(dt1-dt) > EPS5) &
