@@ -33,7 +33,8 @@ if ($opt_M) {
     else {$syn_ext="";}}
 } else {die("Input -M or -d/-s options\n");}
 
-if ($opt_m) {$cmt_file=$opt_m;}
+if ($opt_m) {$cmt_file=$opt_m;} else {die("Input cmt file \n");}
+($moment) = split(" ",` cmtsol2faultpar.pl $cmt_file | awk 'NR == 3 {print \$3}'`);
 
 # comps
 $ncols=3; @comps=("Z","R","T");#Z R T
@@ -51,7 +52,8 @@ $JX = "-JX$jx/$jy"; $B1="-B20/4"; @B=("${B1}WSN","${B1}SN","${B1}ESN");
 $Vl=3.0; # surface wave velocity to determine tend
 $bp=10; $bp2=10;# start time before t1 header and end time after tend
 $E="-Ent1"; # align by trace number and t1
-@size_all=(0.03,0.03,0.06); # this may have to be adjusted according to Mw
+@size_all=(0.03/2.4e23*$moment,0.03/2.4e23*$moment,0.06/2.4e23*$moment); 
+print "plot sizes = @size_all \n";
 $wdata="-W3/0/0/0"; $wsyn="-W2/255/0/0"; $gwin="-G220 -W3";
 
  $jxy_map="-X3 -Y8"; $JM="-JM3";
@@ -156,7 +158,7 @@ for ($j=0;$j<$nplot;$j++) {
 	$az=sprintf("%5.2f",$file{$stas[$k]}{az});
 	$tex_file.="$tt3 $kt1 8 0 4 LM $stas[$k] $dist\n$tt3 $kt2 8 0 4 LM $az\n";
 	$stla=$file{$stas[$k]}{stla}; $stlo=$file{$stas[$k]}{stlo};
-	$stla2=$stla+0.1;
+#	$stla2=$stla+0.1;
 	$xy_file.="$stlo $stla\n";
 	$t_file.="$stlo $stla 7 0 4 CB $stas[$k]\n";
       }
@@ -211,4 +213,4 @@ print BASH "ps2pdf.csh ds_??.ps\npdcat -r ds_??.pdf ds_all.pdf\n";
 
 close(BASH);
 
-#system("chmod a+x plot_ds.bash; plot_ds.bash");
+system("chmod a+x plot_ds.bash; plot_ds.bash");

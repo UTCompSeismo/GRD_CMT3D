@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# this program copies over the synthetics from wagholi and untar them and set them up for cmt3d and grid3d inversions
-
 if [ $# != 1 ]; then
   echo "Usage: cp_syn.bash evid-file"; exit
 fi
 
 cluster="lqy@$wag:/net/wagholi/scratch1/lqy/CMT3D_Basin_Adjoint/cmt_mass/"
 
-extra_dir="_rerun"
+extra_dir="_5.6km"
 
 for evid in `cat $1 `; do 
   mkdir -p ${evid}${extra_dir}; 
+## copy sem syn from cluster
   cd ${evid}${extra_dir}; mkdir -p syn; mkdir -p backup
   scp $cluster/${evid}${extra_dir}/* syn/
   cp syn/CMTSOLUTION .; cp ../event_info/STATIONS .
+
   cp ../event_info/MEASUREMENT_WINDOWS_${evid}_T00?_T030_m12 .
 ## here check if MEASURE file has the right number of data/syn pairsa
   mafile="MEASUREMENT_WINDOWS_${evid}_ALL"
@@ -35,7 +35,7 @@ for evid in `cat $1 `; do
     perl -pi -e "s/\.semd\.sac\.m12//g" $mfile
     awk 'NR > 1 {print $0}' $mfile >> $mafile
     nm0=`head -n 1 $mfile`
-    nma=`echo $nm0 + $nma | bc ` 
+    nma=`echo $nm0 + $nma | bc `
     rm -f $mfile
   done
 ## here to link cmt3d/grid3d_flexwin
@@ -46,8 +46,14 @@ for evid in `cat $1 `; do
   cp ../../grd_cmt3d/grid3d/GRID3D.PAR .
   perl -pi -e "s/flexwin\.out/$mafile/g" INVERSION.PAR
   cp INVERSION.PAR INVERSION.PAR.SAVE
-##  make sure you have the right dmoment, ddepth, and dlocation
   perl -pi -e "s/flexwin\.out/$mafile/g" GRID3D.PAR
+##  make sure you have the right dmoment, ddepth, and dlocation
+  dlat=`diff -b syn/CMTSOLUTION  syn/CMTSOLUTION_lat  | grep lat | awk '{print $3}' | perl -pi -e 's/\n/ /g' | awk '{print $2-$1}'`
+  ddep=`diff -b syn/CMTSOLUTION  syn/CMTSOLUTION_dep  | grep dep | awk '{print $3}' | perl -pi -e 's/\n/ /g' | awk '{print $2-$1}'`
+  perl -pi -e "s/^.*1.0e22*/$dlat $ddep 1.0e22/" INVERSION.PAR
+  perl -pi -e "s/^.*1.0e22*/$dlat $ddep 1.0e22/" GRID3D.PAR
+
+## right number of measurements
   echo $nma | cat - $mafile > out.tmp; mv out.tmp $mafile 
 ## Unzip synthetics
   cd syn

@@ -276,6 +276,7 @@ contains
     if (global_search) filename=trim(filename)//'.'//char(icalc+48)
     
     min_misfit=minval(misfit(1:n_total))
+    print *, 'minimum misfit value = ', min_misfit
     if (abs(min_misfit) > 10*tiny(1.0)) then
        misfit = misfit/min_misfit
     else

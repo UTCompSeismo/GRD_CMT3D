@@ -34,10 +34,10 @@ module cmt3d_constants
   integer, parameter :: NDATAMAX = 30000
 
 ! maximum number of records (NRECMAX < NWINMAX)
-  integer, parameter :: NRECMAX = 500
+  integer, parameter :: NRECMAX = 1200
   
 ! maximum number of windows
-  integer, parameter :: NWINMAX = 1000
+  integer, parameter :: NWINMAX = 1800
 
 ! number of pars for moment only
   integer, parameter :: NM = 6
