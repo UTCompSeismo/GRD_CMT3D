@@ -83,7 +83,7 @@ for ($k=1;$k<@ARGV;$k++) {
   $arr=$ar[-1]+$ddr*2; # position for title
   $pp="$as[$nrows/2] $arr";
 
-  print CSH "makecpt -T$min/$max/$db2 -Cseis -Z -I > temp.cpt \n";
+  print CSH "makecpt -T$min/$max/$db2 -Cseis -Z > temp.cpt \n";
 
   plot_psxy(\*CSH,$psfile,"$JX -K -X0 -Y0","");
 

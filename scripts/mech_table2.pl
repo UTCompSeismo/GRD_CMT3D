@@ -5,7 +5,7 @@ use GMT_PLOT_SC;
 use CMT_TOOLS;
 use POSIX;
 
-
+## ok, this version includes both 2, 3 and 6 seconds measurements
 # parameter files
 $inv_file="INVERSION.PAR.SAVE";
 $outdir="mech"; $psfile="mech.ps";
@@ -14,13 +14,22 @@ $weigh_data="2 2 1 0.5 1.15 0.55 0.78";
 $weigh_data_nocomp="1 1 1 0.5 1.15 0.55 0.78";
 $weigh_data_noaz="2 2 1 0 1.15 0.55 0.78";
 
-@names=("initial","grid_search","7 Par+ZT", "6 Par+ZT","7 Par+no-SC","7 Par+no-AZ","6 Par+DC","7 Par+DC","7 Par+no-Comp");
-@npars=(6,6, 7, 6,7,7, 6,7,7);
-@wdatas=($weigh_data, $weigh_data, $weigh_data, $weigh_data,$weigh_data,$weigh_data_noaz, $weigh_data,$weigh_data,$weigh_data_nocomp);
-@scorrs=("true","true",".true.",  ".true.", ".false.", ".true.",  ".true.",".true.",".true.");
+if (not -f "CMTSOLUTION") {die("Check cmt solution file\n");}
+($evid)=split(" ",`cat CMTSOLUTION | awk 'NR == 2 {print \$3}'`);
+$mwin="MEASUREMENT_WINDOWS";
+
+@names=("Initial","Grid Search","7 Par+ZT",
+        "7 Par+no-SC","6 par+DC","7 Par+DC",
+        "7 Par(2-30s)","7 Par(3-30s)","7 Par(6-30s)");
+@npars=(6,6,7, 7,6,7, 7,7,7);
+@wdatas=($weigh_data, $weigh_data, $weigh_data, $weigh_data,$weigh_data,$weigh_data, $weigh_data,$weigh_data,$weigh_data);
+@scorrs=("true","true",".true.",  ".false.", ".true.", ".true.",  ".true.",".true.",".true.");
 @cons=(".true. true. 0.0", ".true. .true. 0.0", ".true. .false. 0.0",
-       ".true. .false. 0.0", "true. .false. 0.0", "true. .false. 0.0",
-       ".true. .true. 0.0",".true. .true. 0.0",".true. .false. 0.0");
+       ".true. .false. 0.0", "true. .true. 0.0", "true. .true. 0.0",
+       ".true. .true. 0.0",".true. .true. 0.0",".true. .true. 0.0");
+@meas=("${mwin}_${evid}_ALL","${mwin}_${evid}_ALL","${mwin}_${evid}_ALL",
+       "${mwin}_${evid}_ALL","${mwin}_${evid}_ALL","${mwin}_${evid}_ALL",
+       "${mwin}_${evid}_T002_T030_m12","${mwin}_${evid}_T003_T030_m12","${mwin}_${evid}_T006_T030_m12");
 
 $nbeach=@npars;
 $ncols = 3;
@@ -53,7 +62,8 @@ if (-f "${cmt}_GRD") {print BASH "cp -f ${cmt}_GRD $outdir\n";}
 for ($k=2;$k<$nbeach;$k++) { # cmt3d runs
   print BASH "echo Running cmt3d_flexwin for INVERSION.$k ...\n";
   open(INV,">INVERSION.$k");
-  print INV "${cmt}\n${cmt_new}\n$npars[$k]\n$delta${flex}.true.\n$wdatas[$k]\n$scorrs[$k]\n$cons[$k]\n${wns}";
+  print INV "${cmt}\n${cmt_new}\n$npars[$k]\n$delta$meas[$k]\n.true.\n$wdatas[$k]\n$scorrs[$k]\n$cons[$k]\n";
+  if ($k==2) {print INV ".true.\n";}   else { print INV "${wns}\n";}
   close(INV);
   print BASH "# --- mech $k ----\n";
   print BASH "cp -f INVERSION.$k INVERSION.PAR\n";
@@ -95,7 +105,15 @@ for ($i=0;$i<$nrows;$i++) {
       if ($k>=2) {$tex.=sprintf("\n0.2 0.4 9 0 4 LM Var=%6.2f%",$var[$k]);}
       plot_pstext(\*BASH,$psfile,"-JX -R -B -G0/0/255","$tex");
     }
-    if ($k==1) {plot_pstext(\*BASH,$psfile,"-JX -R -B -N","1.5 4 12 0 4 CM $ename");}
+    if ($k==1) {
+     ($nt) = split(" ",`grep 'T.sac.d' $meas[2] | wc | awk '{print \$1}'`);
+     ($nr) = split(" ",`grep 'R.sac.d' $meas[2] | wc | awk '{print \$1}'`);
+     ($nz) = split(" ",`grep 'Z.sac.d' $meas[2] | wc | awk '{print \$1}'`);
+     ($n2) = split(" ",`grep 'T002.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
+     ($n3)  = split(" ",`grep 'T003.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
+     ($n6)  = split(" ",`grep 'T006.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
+
+      plot_pstext(\*BASH,$psfile,"-JX -R -B -N","1.5 4 12 0 4 CM $ename ($nz/$nr/$nt; $n2/$n3/$n6)");}
     plot_psxy(\*BASH,$psfile,"-JX -X-$x -Y-$y","");
     $k++;
   }

@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+# again this is partly based on Carl's master script
 use Getopt::Std;
 use POSIX;
 use vars qw($opt_0 $opt_1 $opt_2 $opt_3 $opt_t $opt_x);

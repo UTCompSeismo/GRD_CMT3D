@@ -14,9 +14,9 @@ use Getopt::Std;
 use List::Util qw[min max];
 
 
-if (@ARGV == 0) {die("Usage: plot_data_and_syn.pl -d data_dir,data_ext -s syn_dir,syn_ext -M flexwin_file -m CMTSOLUTION \n");}
+if (@ARGV == 0) {die("Usage: plot_data_and_syn.pl -d data_dir,data_ext -s syn_dir,syn_ext -Snew_syn_dir,new_syn_ext -M flexwin_file -m CMTSOLUTION -A Z/R/T(0.03/0.03/0.01)\n");}
 
-if (!getopts('d:s:m:M:')) {die("Check input options\n");}
+if (!getopts('d:s:S:m:M:A:')) {die("Check input options\n");}
 
 # data/syn dir and extension
 if ($opt_M) {
@@ -33,8 +33,13 @@ if ($opt_M) {
     else {$syn_ext="";}}
 } else {die("Input -M or -d/-s options\n");}
 
+if ($opt_S) {$plot_new = 1;
+  ($new_syn_dir,$new_syn_ext) = split(/\,/,$opt_S);
+  if ($new_syn_ext) {$new_syn_ext=".$new_syn_ext";}
+  else {$new_syn_ext="";}}
+
 if ($opt_m) {$cmt_file=$opt_m;} else {die("Input cmt file \n");}
-($moment) = split(" ",` cmtsol2faultpar.pl $cmt_file | awk 'NR == 3 {print \$3}'`);
+($moment) = split(" ",`cmtsol2faultpar.pl $cmt_file | awk 'NR == 3 {print \$3}'`);
 
 # comps
 $ncols=3; @comps=("Z","R","T");#Z R T
@@ -52,11 +57,16 @@ $JX = "-JX$jx/$jy"; $B1="-B20/4"; @B=("${B1}WSN","${B1}SN","${B1}ESN");
 $Vl=3.0; # surface wave velocity to determine tend
 $bp=10; $bp2=10;# start time before t1 header and end time after tend
 $E="-Ent1"; # align by trace number and t1
-@size_all=(0.03/2.4e23*$moment,0.03/2.4e23*$moment,0.06/2.4e23*$moment); 
+if ($opt_A) {
+  ($za,$ra,$ta) = split(/\//,$opt_A);
+  @size_all=($za/2.4e23*$moment,$ra/2.4e23*$moment,$ta/2.4e23*$moment);
+} else {
+  @size_all=(0.03/2.4e23*$moment,0.03/2.4e23*$moment,0.06/2.4e23*$moment);}
 print "plot sizes = @size_all \n";
-$wdata="-W3/0/0/0"; $wsyn="-W2/255/0/0"; $gwin="-G220 -W3";
+$wdata="-W3/0/0/0"; $wsyn="-W2/255/0/0";  $gwin="-G220 -W3";
+if ($plot_new) {$wsyn="-W2/0/0/255"; $wnsyn="-W2/255/0/0";}
 
- $jxy_map="-X3 -Y8"; $JM="-JM3";
+$jxy_map="-X3 -Y8"; $JM="-JM3";
 # *****************************************************
 
 # loop over data files, select corresponding syn files and set up % file
@@ -68,16 +78,19 @@ if ($flexwin == 0) { # given data and syn dir
     (undef,$net,$sta,$chan,$dist,$az,$t1,$stla,$stlo) = split(" ",`saclst knetwk kstnm kcmpnm dist az t1 stla stlo f $datfile`);
     ($comp) = split(" ",`echo $chan | awk '{print substr(\$1,3,1)}'`);
     $synfile = "${syn_dir}/${sta}.${net}.BH${comp}${syn_ext}";
+    
     if (not -f $synfile) {
       print "**** Missing synthetic pair $synfile for $datfile ***, skipping ...\n"; } 
     else {
       $file{$sta}{dist}=$dist; $file{$sta}{az}=$az; $file{$sta}{P}=$t1;
       $file{$sta}{"data-$comp"}=$datfile; $file{$sta}{"syn-$comp"}=$synfile;
       $file{$sta}{stla}=$stla; $file{$sta}{stlo}=$stlo;
+      if ($plot_new) {
+	$new_synfile="${new_syn_dir}/${sta}.${net}.BH${comp}${new_syn_ext}";
+	$file{$sta}{"new-syn-$comp"}=$new_synfile;}
     }
   }
 } else { # given flexwin output
-#  (@files) = `grep -v '^ *-*[0-9].*$' $mfile`;
   open(MFILE,"$mfile");
   $nfile=<MFILE>;
   for ($i=0;$i<$nfile;$i++) {
@@ -92,6 +105,9 @@ if ($flexwin == 0) { # given data and syn dir
     $file{$sta}{dist}=$dist; $file{$sta}{az}=$az; $file{$sta}{P}=$t1;
     $file{$sta}{"data-$comp"}=$datfile; $file{$sta}{"syn-$comp"}=$synfile;
     $file{$sta}{stla}=$stla; $file{$sta}{stlo}=$stlo;
+    if ($plot_new) {
+      $new_synfile="${new_syn_dir}/${sta}.${net}.BH${comp}${new_syn_ext}";
+      $file{$sta}{"new-syn-$comp"}=$new_synfile;}
     # windows
     ($nwin)=split(" ",<MFILE>);
     $file{$sta}{"nwin-$comp"}=$nwin; $file{$sta}{"win-$comp"}="";
@@ -146,11 +162,12 @@ for ($j=0;$j<$nplot;$j++) {
     # ***** CONTROL PAR ******
     $size=2*$size_all[$i]/($dist_min+$dist_max);
 
-    $data_files="";$syn_files="";$win_files="";
+    $data_files="";$syn_files="";$win_files=""; $new_syn_files="";
     if ($i==0) {$tex_file="";$xy_file="";$t_file="";}
     for ($k=0;$k<@stas;$k++) {
       $dfile=$file{$stas[$k]}{"data-$comps[$i]"};
       $sfile=$file{$stas[$k]}{"syn-$comps[$i]"};
+      if ($plot_new) {$nsfile=$file{$stas[$k]}{"new-syn-$comps[$i]"};}
       # station name, dist, az
       if ($i==0) {
 	$kt1=$k+0.2; $tt3=$tmin; $kt2 = $k-0.2;
@@ -165,6 +182,7 @@ for ($j=0;$j<$nplot;$j++) {
 
       if (defined $dfile and defined $sfile) {
 	$data_files.="$dfile 0 $k\n"; $syn_files.="$sfile 0 $k\n";
+	if ($plot_new) {$new_syn_files.="$nsfile 0 $k\n";}
 	# windows
 	if ($flexwin) {
 	  @wins=split("\n",$file{$stas[$k]}{"win-$comps[$i]"});
@@ -176,7 +194,7 @@ for ($j=0;$j<$nplot;$j++) {
 	}
       }
     }
-    chomp($data_files); chomp($syn_files);
+    chomp($data_files); chomp($syn_files); chomp($new_syn_files);
 
     # plot windows
     if ($flexwin) {
@@ -186,7 +204,10 @@ for ($j=0;$j<$nplot;$j++) {
     # plot data/syn
     plot_pssac2_raw(\*BASH,$psfile,"$JX $R $B[$i] $E $C -M$size/0 $wdata -N","$data_files");
     plot_pssac2_raw(\*BASH,$psfile,"-JX -R -B $E $C -M$size/0 $wsyn -N","$syn_files");
-    if ($i==0) { 
+    if ($plot_new) {
+      plot_pssac2_raw(\*BASH,$psfile,"-JX -R -B $E $C -M$size/0 $wnsyn -N","$new_syn_files");
+    }
+    if ($i==0) {
       chomp($tex_file); chomp($t_file); chomp($xy_file);
       plot_pstext(\*BASH,$psfile,"-JX -R -B","$tex_file");}
 
