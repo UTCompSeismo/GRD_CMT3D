@@ -61,12 +61,12 @@ for evid in `cat $1 `; do
   cp ../../grd_cmt3d/cmt3d/INVERSION.PAR .
   cp ../../grd_cmt3d/grid3d/GRID3D.PAR .
   perl -pi -e "s/flexwin\.out/$mafile/g" INVERSION.PAR
-  cp INVERSION.PAR INVERSION.PAR.SAVE
+  mv INVERSION.PAR INVERSION.PAR.SAVE
   perl -pi -e "s/flexwin\.out/$mafile/g" GRID3D.PAR
 ##  make sure you have the right dmoment, ddepth, and dlocation
   dlat=`diff -b syn/CMTSOLUTION  syn/CMTSOLUTION_lat  | grep lat | awk '{print $3}' | perl -pi -e 's/\n/ /g' | awk '{print $2-$1}'`
   ddep=`diff -b syn/CMTSOLUTION  syn/CMTSOLUTION_dep  | grep dep | awk '{print $3}' | perl -pi -e 's/\n/ /g' | awk '{print $2-$1}'`
-  perl -pi -e "s/^.*1.0e22*/$dlat $ddep 1.0e22/" INVERSION.PAR
+  perl -pi -e "s/^.*1.0e22*/$dlat $ddep 1.0e22/" INVERSION.PAR.SAVE
 ####
   cd ..; 
 done

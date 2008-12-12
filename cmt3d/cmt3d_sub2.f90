@@ -168,7 +168,10 @@ contains
     ! array indices of the start and end of the selected window
     istart = max(floor((tstart-t0)/dt),1)
     iend = min(ceiling((tend-t0)/dt) + 1,npts)
-    if (istart >= iend) stop 'Check tstart and tend'
+    if (istart >= iend) then
+        print *, trim(data_file), trim(syn_file), tstart, tend
+        stop 'Check tstart and tend'
+    endif
 
     if (station_correction) then
        ! matching syn(is:ie) with data(is+it:ie+it)

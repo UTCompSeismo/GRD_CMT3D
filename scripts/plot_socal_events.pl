@@ -31,7 +31,7 @@ open(BASH,">socal_map.bash");
 
 print BASH "gmtset PAPER_MEDIA letter BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH 0.3c LABEL_FONT_SIZE 12 ANOT_FONT_SIZE 10  HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN 2p TICK_PEN 2p \n";
 
-plot_sc_all(\*BASH,$psfile,"$JM -R$R -W1.5 -w0.5 -B2/2WesN -W1p,0 -Na/1.0p,255/255/255 -I$file.int -C$file.cpt $file.grd -K","");
+plot_sc_all(\*BASH,$psfile,"$JM -R$R -W1.5 -w0.5 -B2/2WesN -Na/1.0p,255/255/255 -I$file.int -C$file.cpt $file.grd -K","");
 
 plot_psxy(\*BASH,$psfile,"-JM -R -St0.07 -W0.3 -G255/0/0","$station");
 

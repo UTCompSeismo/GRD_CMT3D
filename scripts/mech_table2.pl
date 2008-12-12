@@ -35,7 +35,7 @@ $nbeach=@npars;
 $ncols = 3;
 $nrows = 3;
 # plot size jx/jy, plot origin in xy
-($jx,$jy) = shift_xy("1 1","$ncols $nrows","7  8", \@xy,"0.8 0.8");
+($jx,$jy) = shift_xy("1 1","$ncols $nrows","7  7", \@xy,"0.8 0.8");
 $JX = "-JX$jx/$jy"; $R="-R0/3/0/3";
 $GMT_PLOT::paper_orient="-P";
 
@@ -95,7 +95,7 @@ for ($i=0;$i<$nrows;$i++) {
     $xy=$xy[$i][$j];($x,$y) = split(/\//,$xy);
     plot_psxy(\*BASH,$psfile,"$JX -X$x -Y$y $R","");
     if (-f "$outdir/$cmt[$k]") {
-      plot_psmeca_raw(\*BASH,$psfile,"-JX -R -Sm1.0 -B3/3wesn","1.5 2","$outdir/$cmt[$k]");
+      plot_psmeca_raw(\*BASH,$psfile,"-JX -R -Sm1.0 ","1.5 2","$outdir/$cmt[$k]");
       @output = `cmtsol2faultpar.pl $outdir/$cmt[$k]`;
       (undef,$tmp1) = split(" ", $output[4]);
       (undef,$tmp2) = split(" ", $output[6]);
@@ -103,7 +103,7 @@ for ($i=0;$i<$nrows;$i++) {
       $tex="1 1 9 0 4 CM $names[$k]\n";
       $tex.="0.2 0.8 9 0 4 LM Mw/dep/eps/= $tmp1\n0.2 0.6 9 0 4 LM S/D/R= $s/$d/$r";
       if ($k>=2) {$tex.=sprintf("\n0.2 0.4 9 0 4 LM Var=%6.2f%",$var[$k]);}
-      plot_pstext(\*BASH,$psfile,"-JX -R -B -G0/0/255","$tex");
+      plot_pstext(\*BASH,$psfile,"-JX -R  -G0/0/255","$tex");
     }
     if ($k==1) {
      ($nt) = split(" ",`grep 'T.sac.d' $meas[2] | wc | awk '{print \$1}'`);
@@ -113,7 +113,7 @@ for ($i=0;$i<$nrows;$i++) {
      ($n3)  = split(" ",`grep 'T003.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
      ($n6)  = split(" ",`grep 'T006.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
 
-      plot_pstext(\*BASH,$psfile,"-JX -R -B -N","1.5 4 12 0 4 CM $ename ($nz/$nr/$nt; $n2/$n3/$n6)");}
+      plot_pstext(\*BASH,$psfile,"-JX -R  -N","1.5 4 12 0 4 CM $ename ($nz/$nr/$nt; $n2/$n3/$n6)");}
     plot_psxy(\*BASH,$psfile,"-JX -X-$x -Y-$y","");
     $k++;
   }

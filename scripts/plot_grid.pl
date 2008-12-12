@@ -22,9 +22,9 @@ $nrows= 6;
 $ncols= 3;
 @name=("S","D","R");
 for ($i=1;$i<=$nrows-1;$i++) {
-  $Bs[$i]="Wesn"; $Bd[$i]="Wesn"; $Br[$i]="Wesn";}
-$Bs[0]="WesN"; $Bd[0]="WesN"; $Br[0]="WesN";
-$Bs[-1]="WeSn"; $Bd[-1]="WeSn"; $Br[-1]="WeSn";
+  $Bs[$i]="Wesn"; $Bd[$i]="wesn"; $Br[$i]="wEsn";}
+$Bs[0]="WesN"; $Bd[0]="wesN"; $Br[0]="wEsN";
+$Bs[-1]="WeSn"; $Bd[-1]="weSn"; $Br[-1]="wESn";
 
 # plot size jx/jy, plot origin in xy
 ($jx,$jy) = shift_xy("1 1.5","$ncols $nrows","7  8", \@xy,"0.84 0.84");
@@ -94,14 +94,17 @@ for ($k=1;$k<@ARGV;$k++) {
       plot_psxy(\*CSH,$psfile,"$JX -X$x -Y$y","");
       if ($i==0) {
 	$value=$ps[$j]; $B="-B$ddd/${ddr}$Bs[$j]";
+        if ($j==$nrows-1) {$B="-B$ddd:\"Dip\":/${ddr}:\"Rake\":$Bs[$j]";}
 	print CSH "awk '\$1==$ps[$j] {print \$2,\$3,\$4}' $result > tmp1\n";
 	print CSH "xyz2grd tmp1 -Gout.grd -I$td/$tr -R$sd/$ed/$sr/$er \n";
       } elsif ($i==1) {
 	$value=$pd[$j]; $B="-B$dds/${ddr}$Bd[$j]";
+        if ($j==$nrows-1) {$B="-B$dds:\"Strike\":/${ddr}$Bd[$j]";}
 	print CSH "awk '\$2==$pd[$j] {print \$1,\$3,\$4}' $result > tmp1\n";
 	print CSH "xyz2grd tmp1 -Gout.grd -I$ts/$tr -R$ss/$es/$sr/$er \n";
       } else {
 	$value=$pr[$j];$B="-B$dds/${ddd}$Br[$j]";
+        if ($j==$nrows-1) {$B="-B$dds:\"Strike\":/${ddd}:\"Dip\":$Br[$j]";}
 	print CSH "awk '\$3==$pr[$j] {print \$1,\$2,\$4}' $result > tmp1\n";
 	print CSH "xyz2grd tmp1 -Gout.grd -I$ts/$td -R$ss/$es/$sd/$ed \n";
       }
@@ -113,7 +116,7 @@ for ($k=1;$k<@ARGV;$k++) {
       print CSH "\n";
     }
   }
-print CSH "psscale -Ctemp.cpt -D4i/1.0i/2.5i/0.17h $db -K -O -V -P >> $psfile\n";
+print CSH "psscale -Ctemp.cpt -D4i/0.6i/2.5i/0.17h $db -K -O -V -P >> $psfile\n";
 plot_psxy(\*CSH,$psfile,"$JX -O","");
 close(CSH);
 
