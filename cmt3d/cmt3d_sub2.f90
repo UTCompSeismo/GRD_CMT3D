@@ -169,7 +169,7 @@ contains
     istart = max(floor((tstart-t0)/dt),1)
     iend = min(ceiling((tend-t0)/dt) + 1,npts)
     if (istart >= iend) then
-        print *, trim(data_file), trim(syn_file), tstart, tend
+        print *, trim(data_file),' ', trim(syn_file), tstart, tend
         stop 'Check tstart and tend'
     endif
 

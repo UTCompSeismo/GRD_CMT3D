@@ -93,7 +93,7 @@ CMTSOLUTION_NEW
 6                              -- npar : number of parameters inverted
 0.0025 1.0  1.0e22             -- ddelta,ddepth,dmoment
 flexwin.out
-.true.                         -- weigh_data_files
+.true. .false.                 -- weigh_data_files, read_weight
 2 2 1  0  1.15 0.55 0.78       -- weights of data comp,az,dist
 .true.                         -- station_correction
 .true.  .true. 0.0             -- zero_trace,double_couple,damping
@@ -107,21 +107,21 @@ nfiles
 data-file-1
 syn-file-1
  nwins-for-this-data-and-syn
- tstart(1) tend(1)
+ tstart(1) tend(1) [tshift(1) weight(1)]
  ...
- tstart(nwin) tend(nwin)
+ tstart(nwin) tend(nwin) [tshift(nwin) weight(nwin)]
 data-file-2
 syn-file-2
 ...
 \end{verbatim}
-Only windows from this output file will be used to perform time integration in the process of assembling the inversion matrices.
+Only windows from this output file will be used to perform time integration in the process of assembling the inversion matrices. Note the values in [] are recent additions where we allow weight to be specified in the input file together with an indicative logical \verb+read_weight+. For now, `tshift' are still dummy variables not used for aligning data and synthetics (a separte corr subroutine calculates it in the code, but future merge may be possible).
 
 All other parameters are pretty self-explanatory:
 
 \begin{itemize}
  \item Number of parameters to be inverted can only be 6(moment-only), 7(moment+depth), 9(moment+locations). 
  \item The derivative synthetics should have been calculated based on the \verb=ddelta=, \verb=ddepth=, \verb=dmoment= values. However, notice that strictly speaking, only the ones for moment are derivative synthetics, the ones for depth, longitude, and latitude are actual synthetics, from which you then need to subtract the old synthetics and divide by ddepth or ddelta. 
- \item Weighting can be complicated if you choose to \verb=weigh_data_files=. But the idea is that you utilize the \verb=dist_km=, \verb=dist_deg=, \verb=azimuth=, and other file information from the sac headers to come up with a sensible weighting scheme for your particular scale/region, which you can accomplish by modifying subroutine \verb=compute_data_weights()= . 
+ \item Weighting can be complicated if you choose to \verb=weigh_data_files=, and not importing weights directly from the input file by \verb=read_weight=. But the idea is that you utilize the \verb=dist_km=, \verb=dist_deg=, \verb=azimuth=, and other file information from the sac headers to come up with a sensible weighting scheme for your particular scale/region, which you can accomplish by modifying subroutine \verb=compute_data_weights()= . 
  \item Station correction is used to align the data with the synthetics to accommondate 3D path effects that may skew your source inversion results.
  \item Different constraints on the moment-tensor are allowed, including zero-trace and double-couple. To improve the stability of the matrix inverse, damping is also allowed before Gaussian ellimination.
  \item Finally synthetics for the new cmt solution can be written, however, notice that these are obtained from `linearized' approximation, not from an actual SEM simulation.

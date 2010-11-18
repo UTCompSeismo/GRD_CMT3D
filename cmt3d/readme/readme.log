@@ -1,19 +1,20 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=latex 2008.9.25)  16 NOV 2008 17:14
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2010.11.11)  18 NOV 2010 16:53
 entering extended mode
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **readme.tex
 (./readme.tex
-LaTeX2e <2005/12/01>
-Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
 yphenation, loaded.
 (/usr/share/texmf-texlive/tex/latex/base/article.cls
-Document Class: article 2005/09/16 v1.4f Standard LaTeX document class
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texmf-texlive/tex/latex/base/fleqn.clo
 File: fleqn.clo 1998/08/17 v1.1c Standard LaTeX option (flush left equations)
 \mathindent=\dimen102
 )
 (/usr/share/texmf-texlive/tex/latex/base/size12.clo
-File: size12.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
+File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -86,14 +87,14 @@ LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
 )
 (/usr/share/texmf-texlive/tex/latex/amsfonts/amssymb.sty
-Package: amssymb 2002/01/22 v2.2d
+Package: amssymb 2009/06/22 v3.00
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/amsfonts.sty
-Package: amsfonts 2001/10/25 v2.2f
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
-(Font)                  U/euf/m/n --> U/euf/b/n on input line 132.
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
 ))
 (/usr/share/texmf-texlive/tex/latex/base/latexsym.sty
 Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
@@ -102,10 +103,10 @@ LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
 (Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
 )
 (/usr/share/texmf-texlive/tex/latex/natbib/natbib.sty
-Package: natbib 2007/02/05 8.0 (PWD)
+Package: natbib 2009/07/16 8.31 (PWD, AO)
 \bibhang=\skip46
 \bibsep=\skip47
-LaTeX Info: Redefining \cite on input line 602.
+LaTeX Info: Redefining \cite on input line 694.
 \c@NAT@ctr=\count99
 )
 (/usr/share/texmf-texlive/tex/latex/tools/xspace.sty
@@ -119,15 +120,15 @@ Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks19
 )
 (/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
-Package: graphics 2006/02/20 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
 (/etc/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
 )
-Package graphics Info: Driver file: dvips.def on input line 90.
+Package graphics Info: Driver file: dvips.def on input line 91.
 
 (/usr/share/texmf-texlive/tex/latex/graphics/dvips.def
 File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
@@ -141,8 +142,8 @@ Package: bm 2004/02/26 v1.1c Bold Symbol Support (DPC/FMi)
 \symboldletters=\mathgroup8
 \symboldsymbols=\mathgroup9
 \symboldlasy=\mathgroup10
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 137.
-LaTeX Info: Redefining \bm on input line 203.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 138.
+LaTeX Info: Redefining \bm on input line 204.
 )
 (/usr/share/texmf-texlive/tex/latex/setspace/setspace.sty
 Package: setspace 2000/12/01 6.7 Contributed and Supported LaTeX2e package
@@ -225,19 +226,19 @@ File: omsptm.fd
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 122.
  [2] [3]
-Overfull \hbox (1.93327pt too wide) in paragraph at lines 188--192
+Overfull \hbox (1.93327pt too wide) in paragraph at lines 187--191
 []\OT1/pcr/m/n/12 process_syn_new.pl \OT1/ptm/m/n/12 (global/regional) or []\OT
 1/pcr/m/n/12 process_trinet_syn_new.pl\OT1/ptm/m/n/12 (socal), 
  []
 
-[4] (./readme.aux) ) 
+[4] [5] (./readme.aux) ) 
 Here is how much of TeX's memory you used:
- 2092 strings out of 95087
- 22771 string characters out of 1183278
- 74235 words of memory out of 1500000
- 5267 multiletter control sequences out of 10000+50000
- 6160 words of font info for 21 fonts, out of 1200000 for 2000
+ 2191 strings out of 495062
+ 23902 string characters out of 1182643
+ 77506 words of memory out of 3000000
+ 5371 multiletter control sequences out of 15000+50000
+ 6160 words of font info for 21 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 27i,4n,24p,1148b,270s stack positions out of 5000i,500n,6000p,200000b,5000s
+ 27i,4n,24p,1148b,270s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on readme.dvi (4 pages, 11868 bytes).
+Output written on readme.dvi (5 pages, 12476 bytes).

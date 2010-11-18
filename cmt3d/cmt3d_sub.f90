@@ -30,7 +30,13 @@ contains
 
     read(IOPAR,'(a)') flexwin_out_file
 
-    read(IOPAR,*) weigh_data_files
+! now allow the possibility of reading in weights from input file
+    read(IOPAR,'(l7)',iostat=ios, advance='no') weigh_data_files
+    if (ios /= 0) stop 'Error reading weigh_data_files'
+
+    read(IOPAR,'(l7)',iostat=ios) read_weight
+    if (ios /= 0) read_weight=.false.
+    
 ! here we assume that Pnl wave window is the first window out 
 ! of possible two windows selected for Z and R components
     read(IOPAR,*) comp_z_weight, comp_t_weight, comp_r_weight, &
@@ -64,10 +70,14 @@ contains
        write(*,*) 'take input from FLEXWIN: ', trim(flexwin_out_file), ' ....'
        write(*,*) 
        if (weigh_data_files) then
-          write(*,*) 'Weighing data files according to ...'
-          write(*,'(a,3g15.5)') '  Z, R, T comp (lin) = ', comp_z_weight, comp_t_weight, comp_r_weight
-          write(*,'(a,g15.5)') '  azimuth bin (exp) = ', az_exp_weight
-          write(*,'(a,3g15.5)') '  Pnl/R/S dist (exp) = ', pnl_dist_weight, rayleigh_dist_weight, love_dist_weight
+          if (read_weight) then
+            write(*,*) 'Weight of data will be read from input file'
+          else 
+            write(*,*) 'Weighing data files according to ...'
+            write(*,'(a,3g15.5)') '  Z, R, T comp (lin) = ', comp_z_weight, comp_t_weight, comp_r_weight
+            write(*,'(a,g15.5)') '  azimuth bin (exp) = ', az_exp_weight
+            write(*,'(a,3g15.5)') '  Pnl/R/S dist (exp) = ', pnl_dist_weight, rayleigh_dist_weight, love_dist_weight
+          endif
        else
           write(*,*) 'no weighing of data'
        endif
@@ -102,7 +112,8 @@ contains
     integer :: ios,i,j
     character*8, dimension(NRECMAX) :: kstnm,knetwk,kcmpnm
     real, dimension(NRECMAX) :: azimuth, dist_deg, dist_km
-    real :: tstart, tend
+    real :: tstart, tend, tjunk
+    logical :: lexd, lexs
  
   
     open(IOWIN,file=trim(flexwin_out_file),iostat=ios)
@@ -119,10 +130,23 @@ contains
        read(IOWIN,*) nwins(i)
        if (nwins(i) < 0) stop 'Check nwins(i) '
        if (DEBUG) print *, trim(data_file), ' ', trim(syn_file)
-       nwin_total = nwin_total + nwins(i)
+       inquire(file=data_file,exist=lexd)
+       inquire(file=syn_file,exist=lexs)
+       if (.not. (lexd .and. lexs)) then
+          write(*,*) 'Check data and syn file ', trim(data_file), ' and ', trim(syn_file)
+          stop 
+       endif
        do j = 1, nwins(i)
-          read(IOWIN,*) tstart, tend
+          if (read_weight) then
+            ! LQY: tjunk: time shift for data/syn within the window
+            ! maybe used in the future to replace local corr subroutine
+            read(IOWIN,*,iostat=ios) tstart, tend, tjunk, data_weights(nwin_total+j)
+            if (ios /= 0) stop 'ts, te, tshift, weight are expected!'
+          else
+            read(IOWIN,*) tstart, tend
+          endif
        enddo
+       nwin_total = nwin_total + nwins(i)
        
        call read_sac_info(syn_file, data_file, &
             kstnm(i),kcmpnm(i),knetwk(i),azimuth(i),dist_deg(i),dist_km(i))
@@ -133,8 +157,10 @@ contains
     if (nwin_total > NWINMAX) stop 'Exceeding NWINMAX limit'
 
     if (weigh_data_files) then
-      ! THIS FUNCTION NEEDS TO BE MODIFIED FOR DIFFERENT SEISMIC SCENARIOS 
-       call compute_data_weights(kcmpnm,azimuth,dist_km,data_weights)
+       if (.not. read_weight) then
+         ! THIS FUNCTION NEEDS TO BE MODIFIED FOR DIFFERENT SEISMIC SCENARIOS 
+         call compute_data_weights(kcmpnm,azimuth,dist_km,data_weights)
+       endif
     else
        data_weights(1:nwin_total) = 1.
     endif
