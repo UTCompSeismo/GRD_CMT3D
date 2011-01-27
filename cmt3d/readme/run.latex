@@ -1,3 +1,2 @@
-latex readme.tex
-dvipdf readme.dvi readme.pdf
-#evince readme.pdf &
+pdflatex readme.tex
+acroread readme.pdf &

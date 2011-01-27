@@ -21,12 +21,33 @@ contains
 
     read(IOPAR,'(a)') cmt_file
     read(IOPAR,'(a)') new_cmt_file
-    read(IOPAR,*) npar
+    read(IOPAR,'(i2)',iostat=ios,advance='no') npar
+    if (ios /= 0) stop 'Error reading npar'
+    utm_zone=-2
+    read(IOPAR,*,iostat=ios) utm_zone, utm_center_x, utm_center_y
+    if (ios /= 0 .or. (utm_zone <= 60 .and. utm_zone >= 1)) then
+       global_code=.false.; global_coord=.false.
+       utm_zone=11; utm_center_x=0.; utm_center_y=0.
+       par_name = (/'Mrr','Mtt','Mpp','Mrt','Mrp', 'Mtp','dep','lon','lat', &
+            'ctm','hdr'/)  
+    else if (utm_zone == 0) then
+       global_code=.true.; global_coord=.false.
+       par_name = (/'Mrr','Mtt','Mpp','Mrt','Mrp', 'Mtp','rrr','ttt','ppp', &
+            'ctm','hdr'/) 
+    else if (utm_zone == -1) then
+       global_coord=.true.; global_code=.true.
+       par_name = (/'Mxx','Myy','Mzz','Mxy','Mxz', 'Myz','xxx','yyy','zzz', &
+            'ctm','hdr'/) 
+       if (npar < 9) stop 'For utm=-1, set at least npar = 9'
+    else
+       stop 'Error reading utm_zone (1~60 or 0 for global)'
+    endif
+     
     read(IOPAR,*) ddelta,ddepth,dmoment
     dcmt_par = (/dble(dmoment),dble(dmoment),dble(dmoment), &
                  dble(dmoment),dble(dmoment),dble(dmoment),&
                  dble(ddepth),dble(ddelta),dble(ddelta), &
-                 SCALE_CTIME,SCALE_HDUR/) / SCALE_PAR
+                 1.0d0, 1.0d0/) / SCALE_PAR
 
     read(IOPAR,'(a)') flexwin_out_file
 
@@ -62,8 +83,12 @@ contains
           write(*,*) '7 parameter inversion for moment tensor and depth'
        else if(npar == 9) then
           write(*,*) '9 parameter inversion for moment tensor and location'
+       else if (npar == 10) then
+          write(*,*) '10 parameter inversion for moment+location+tshift'
+       else if (npar == 11) then
+          write(*,*) '11 parameter inversion for moment+location+tshift+hdur'
        else
-          stop 'Number of inversion parameters can only be 6, 7 or 9 at this stage'
+          stop 'Number of inversion parameters can only be [6,7,9,10,11]'
        endif
        write(*,'(a,3g15.5)') ' delta for derivatives: ', ddelta,ddepth,dmoment
        write(*,*) 
@@ -133,12 +158,11 @@ contains
        inquire(file=data_file,exist=lexd)
        inquire(file=syn_file,exist=lexs)
        if (.not. (lexd .and. lexs)) then
-          write(*,*) 'Check data and syn file ', trim(data_file), ' and ', trim(syn_file)
-          stop 
+          write(*,*) 'Check data and syn file ', trim(data_file), ' and ', trim(syn_file); stop 
        endif
        do j = 1, nwins(i)
           if (read_weight) then
-            ! LQY: tjunk: time shift for data/syn within the window
+            ! LQY: tjunk: time shift for data/syn within the window file
             ! maybe used in the future to replace local corr subroutine
             read(IOWIN,*,iostat=ios) tstart, tend, tjunk, data_weights(nwin_total+j)
             if (ios /= 0) stop 'ts, te, tshift, weight are expected!'
@@ -230,10 +254,10 @@ contains
     real*8 :: m1(npar),lam(2), mstart(npar)
     integer, parameter :: NMAX_NL_ITER = 10
 
-
+    ! do we really need the extra scaling??
     old_par = cmt_par(1:npar)/SCALE_PAR(1:npar)
 
-    ! first scale the input matrices and obtain its trace
+    ! first scale the input A matrix and obtain its trace (pre-conditioning)
     trace = 0.0d0
     do i = 1 , npar
        max_row = maxval(abs(A(i,1:npar))) ! maximum value in row i
@@ -254,7 +278,7 @@ contains
        na = npar
     endif
 
-    ! adding damping
+    ! adding damping, mostly not needed for over-determined lsq problem
     do i = 1, npar          
        A(i,i) = A(i,i) + trace * lambda
     enddo
@@ -314,10 +338,10 @@ contains
        write(*,*)  
        write(*,'(11e15.3,/)') sngl(new_par(1:npar))
        write(*,'(/,a,i2,a,/)')' ***********Inversion Result Table(',npar,' pars)************'
-       print *, 'Parameters       Old_CMT        New_CMT '
+       print *, 'PAR_RAMETERS       Old_CMT        New_CMT '
        print *
        do i = 1, NPARMAX
-          write(*,'(1x,a,3g20.8)') PAR_NAME(i),cmt_par(i),new_cmt_par(i)
+          write(*,'(1x,a,3g20.8)') par_name(i),cmt_par(i),new_cmt_par(i)
        enddo
     endif
 
@@ -325,7 +349,7 @@ contains
 
 
 !============================================================
-
+! to match calc_var and create_adj_src, a hanning taper needs to be applied
   subroutine variance_reduction(dm,npar)
 
     integer,intent(in) :: npar
@@ -335,8 +359,9 @@ contains
     real :: b, dt, tstart, tend
     real :: tshift, cc, dlna, v1, v2, tshift_new,cc_new,dlna_new,d1,d2
     real :: var_all, var_all_new
-    integer :: istart, iend, istart_d, iend_d
+    integer :: istart, iend, istart_d, iend_d, ii
     integer :: istart_n, iend_n, istart_dn, iend_dn
+    real, dimension(NDATAMAX) :: taper
     
 
     open(IOWIN,file=trim(flexwin_out_file),iostat=ios)
@@ -363,7 +388,7 @@ contains
           is=max(floor((tstart-b)/dt),1)
           ie=min(ceiling((tend-b)/dt),npts)
 
-          if (station_correction) then
+          if (station_correction) then  !!! needs update?
              call calc_criteria(data_sngl,syn_sngl,npts,is,ie,ishift,cc,dlna)
              call calc_criteria(data_sngl,new_syn_sngl,npts,is,ie,ishift_new,cc_new,dlna_new)
              istart_d=max(1,is+ishift); iend_d=min(npts,ie+ishift)
@@ -374,13 +399,17 @@ contains
              istart_d=is; istart=is; iend_d=ie; iend=ie
              istart_dn=is; istart_n=is; iend_dn=ie; iend_n=ie
           endif
-             
-          v1=sum((syn_sngl(istart:iend)-data_sngl(istart_d:iend_d))**2)
-          v2=sum((new_syn_sngl(istart_n:iend_n)-data_sngl(istart_dn:iend_dn))**2)
-          d1=sum(data_sngl(istart_d:iend_d)**2)
-          d2=sum(data_sngl(istart_dn:iend_dn)**2)
-          var_all = var_all + v1*data_weights(nwint)*dt
-          var_all_new = var_all_new + v2*data_weights(nwint)*dt
+            
+          ! hanning taper
+          do ii = istart,iend
+             taper(ii) = 0.5 * (1-cos(2*pi*(ii-istart)/(iend-istart)))
+          enddo
+          v1=sum(taper(istart:iend)*(syn_sngl(istart:iend)-data_sngl(istart_d:iend_d))**2)
+          v2=sum(taper(istart:iend)*(new_syn_sngl(istart_n:iend_n)-data_sngl(istart_dn:iend_dn))**2)
+          d1=sum(taper(istart:iend)*data_sngl(istart_d:iend_d)**2)
+          d2=sum(taper(istart:iend)*data_sngl(istart_dn:iend_dn)**2)
+          var_all = var_all + 0.5*v1*data_weights(nwint)*dt
+          var_all_new = var_all_new + 0.5*v2*data_weights(nwint)*dt
 
           write(IOINV,'(3g15.5)') tstart,tend,data_weights(nwint)
           write(IOINV,'(3x,4g15.5)') ishift*dt, cc, dlna, v1/d1

@@ -41,12 +41,12 @@ module cmt3d_sub3
     write(22,'(a,f14.4)') 'latitude:',new_par_all(9)
     write(22,'(a,f13.4)') 'longitude:',new_par_all(8)
     write(22,'(a,f17.4)') 'depth:',new_par_all(7)
-    write(22,'(a,g19.6)') 'Mrr:',sngl(new_par_all(1))
-    write(22,'(a,g19.6)') 'Mtt:',sngl(new_par_all(2))
-    write(22,'(a,g19.6)') 'Mpp:',sngl(new_par_all(3))
-    write(22,'(a,g19.6)') 'Mrt:',sngl(new_par_all(4))
-    write(22,'(a,g19.6)') 'Mrp:',sngl(new_par_all(5))
-    write(22,'(a,g19.6)') 'Mtp:',sngl(new_par_all(6))
+    write(22,'(a,e19.6)') 'Mrr:',sngl(new_par_all(1))
+    write(22,'(a,e19.6)') 'Mtt:',sngl(new_par_all(2))
+    write(22,'(a,e19.6)') 'Mpp:',sngl(new_par_all(3))
+    write(22,'(a,e19.6)') 'Mrt:',sngl(new_par_all(4))
+    write(22,'(a,e19.6)') 'Mrp:',sngl(new_par_all(5))
+    write(22,'(a,e19.6)') 'Mtp:',sngl(new_par_all(6))
     close(22)
 
 !!$    iflag = 1

@@ -19,9 +19,11 @@ cmt3d_flexwin.f90 ======
     call set_parameters(par_file) --> 1st part of cmt3d_variables
     call get_cmt(cmt_file,yr,mo,jda,ho,mi,sec,t_cmt,hdur,elat,elon,depth, &
           moment_tensor) --> cmt_par
+    call rotate_cmt(cmt_par,utm_zone,utm_center_x,utm_center_y,1)
     call setup_data_weights() --> nfiles, nwin_all, nwins(:), data_weights(:)
     call setup_matrix(A,b,npar) --> A,b
     call invert_cmt(A,b,dm,npar) --> dm, new_cmt_par
+    call rotate_cmt(new_cmt_par,utm_zone,utm_center_x,utm_center_y,-1)
     call write_new_cmtsolution(cmt_file,new_cmt_file,new_cmt_par)
     call variance_reduction(dm,npar) --> write_new_syn, etc
 

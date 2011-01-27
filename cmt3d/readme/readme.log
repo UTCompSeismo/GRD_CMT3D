@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2010.11.11)  18 NOV 2010 16:53
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.11.11)  27 JAN 2011 11:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -128,10 +128,11 @@ Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 (/etc/texmf/tex/latex/config/graphics.cfg
 File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
 )
-Package graphics Info: Driver file: dvips.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/usr/share/texmf-texlive/tex/latex/graphics/dvips.def
-File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
+\Gread@gobject=\count100
 ))
 \Gin@req@height=\dimen113
 \Gin@req@width=\dimen114
@@ -144,6 +145,29 @@ Package: bm 2004/02/26 v1.1c Bold Symbol Support (DPC/FMi)
 \symboldlasy=\mathgroup10
 LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 138.
 LaTeX Info: Redefining \bm on input line 204.
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/etc/texmf/tex/latex/config/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+(/usr/share/texmf-texlive/tex/latex/tools/enumerate.sty
+Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
+\@enLab=\toks20
+)
+(/usr/share/texmf-texlive/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip48
+\f@ncyO@elh=\skip49
+\f@ncyO@erh=\skip50
+\f@ncyO@olh=\skip51
+\f@ncyO@orh=\skip52
+\f@ncyO@elf=\skip53
+\f@ncyO@erf=\skip54
+\f@ncyO@olf=\skip55
+\f@ncyO@orf=\skip56
 )
 (/usr/share/texmf-texlive/tex/latex/setspace/setspace.sty
 Package: setspace 2000/12/01 6.7 Contributed and Supported LaTeX2e package
@@ -158,87 +182,164 @@ Package: times 2005/04/12 PSNFSS-v9.2a (SPQR)
 (/data2/Util_Codes/latex-utils/tex/newcommands.tex) (./readme.aux)
 \openout1 = `readme.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 43.
-LaTeX Font Info:    ... okay on input line 43.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 43.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 54.
 
 (/usr/share/texmf-texlive/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count101
+\scratchdimen=\dimen115
+\scratchbox=\box28
+\nofMPsegments=\count102
+\nofMParguments=\count103
+\everyMPshowfont=\toks21
+\MPscratchCnt=\count104
+\MPscratchDim=\dimen116
+\MPnumerator=\count105
+\everyMPtoPDFconversion=\toks22
+)
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17.28> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 48.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 48.
-
-(/usr/share/texmf-texlive/tex/latex/psnfss/ot1pcr.fd
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 59.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 59.
+ (/usr/share/texmf-texlive/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Overfull \hbox (2.44429pt too wide) in paragraph at lines 53--54
-[][]\OT1/pcr/m/n/12 CMT3D_FLEXWIN \OT1/ptm/m/n/12 is re-written from my old []\
-OT1/pcr/m/n/12 CMT3D \OT1/ptm/m/n/12 pro-gram to adapt to the out-put of Alessi
-a's
- []
-
-
-Overfull \hbox (23.25575pt too wide) in paragraph at lines 70--71
-[]\OT1/pcr/m/n/12 -d \OT1/ptm/m/n/12 and []\OT1/pcr/m/n/12 -s \OT1/ptm/m/n/12 g
-ive di-rec-tory names and ex-ten-sion names of the raw data and syn-thet-ics. [
-]\OT1/pcr/m/n/12 -0\OT1/ptm/m/n/12 ,[]\OT1/pcr/m/n/12 -1[]-2\OT1/ptm/m/n/12 ,[]
-\OT1/pcr/m/n/12 -3
- []
-
-
-Overfull \hbox (5.7745pt too wide) in paragraph at lines 75--75
- []\OT1/pcr/m/n/12 ./flexwin < flexwin_T006_T030.input > flexwin_T006_T030.stdo
-ut[] 
- []
-
-[1
-
-
-
-]
-Overfull \hbox (33.99979pt too wide) in paragraph at lines 101--101
-[]\OT1/pcr/m/n/12 6                              -- npar : number of parameters
- inverted[] 
- []
-
-
-Overfull \hbox (5.1998pt too wide) in paragraph at lines 101--101
-[]\OT1/pcr/m/n/12 .true.  .true. 0.0             -- zero_trace,double_couple,da
-mping[] 
- []
-
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 122.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 76.
 
 (/usr/share/texmf-texlive/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 122.
- [2] [3]
-Overfull \hbox (1.93327pt too wide) in paragraph at lines 187--191
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 76.
+LaTeX Font Info:    Try loading font information for U+msa on input line 78.
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 78.
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+LaTeX Font Info:    Try loading font information for U+lasy on input line 78.
+
+(/usr/share/texmf-texlive/tex/latex/base/ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+LaTeX Font Info:    Font shape `U/lasy/b/n' in size <8> not available
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 78.
+LaTeX Font Info:    Font shape `U/lasy/b/n' in size <6> not available
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 78.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 88.
+
+
+Package Fancyhdr Warning: \headheight is too small (0.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+
+]
+Overfull \hbox (0.79004pt too wide) in paragraph at lines 123--124
+[]\OT1/ptm/m/n/12 After sim-u-la-tions for these deriva-tive []\OT1/pcr/m/n/12 
+CMTSOLUTION\OT1/ptm/m/n/12 s fin-ish, col-lect syn-thetic seis-mo-grams,
+ []
+
+[2]
+Overfull \hbox (0.94746pt too wide) in paragraph at lines 148--149
+\OT1/ptm/m/n/12 After choos-ing the right pa-ram-e-ters and user func-tions for
+ flexwin pack-age (please re-fer to Alessia's
+ []
+
+
+Overfull \hbox (29.35225pt too wide) in paragraph at lines 152--153
+\OT1/ptm/m/n/12 and then cat the out-put files for in-di-vid-ual pairs of data 
+and syn-thet-ics into an in-put for []\OT1/pcr/m/n/12 cmt3d_flexwin
+ []
+
+
+Overfull \hbox (537.99957pt too wide) in paragraph at lines 159--159
+[]\OT1/pcr/m/n/12 write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0
+.2 -r 2 -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_flexwin_withweight
+[] 
+ []
+
+
+Overfull \hbox (26.79979pt too wide) in paragraph at lines 165--165
+[]\OT1/pcr/m/n/12 plot_data_and_syn.pl -d data_dir,data_ext -s syn_dir,syn_ext 
+-m cmt \[] 
+ []
+
+[3]
+Overfull \hbox (5.1998pt too wide) in paragraph at lines 183--183
+[]\OT1/pcr/m/n/12 .true.  .true. 0.0             -- zero_trace,double_couple,da
+mping[] 
+ []
+
+[4]
+Overfull \hbox (28.99222pt too wide) in paragraph at lines 204--205
+[]\OT1/pcr/m/n/12 weigh_data_files\OT1/ptm/m/n/12 , and not im-port-ing weights
+ di-rectly from the in-put file by []\OT1/pcr/m/n/12 read_weight\OT1/ptm/m/n/12
+ .
+ []
+
+[5] [6] [7]
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 305.
+ <rot.png, id=41, 710.655pt x 366.36874pt>
+File: rot.png Graphic file (type png)
+ <use rot.png> [8 <./rot.png (PNG copy)>] [9]
+Overfull \hbox (1.93327pt too wide) in paragraph at lines 401--405
 []\OT1/pcr/m/n/12 process_syn_new.pl \OT1/ptm/m/n/12 (global/regional) or []\OT
 1/pcr/m/n/12 process_trinet_syn_new.pl\OT1/ptm/m/n/12 (socal), 
  []
 
-[4] [5] (./readme.aux) ) 
+[10] (./readme.aux) ) 
 Here is how much of TeX's memory you used:
- 2191 strings out of 495062
- 23902 string characters out of 1182643
- 77506 words of memory out of 3000000
- 5371 multiletter control sequences out of 15000+50000
- 6160 words of font info for 21 fonts, out of 3000000 for 9000
+ 2849 strings out of 495061
+ 32413 string characters out of 1182620
+ 91478 words of memory out of 3000000
+ 5965 multiletter control sequences out of 15000+50000
+ 24268 words of font info for 65 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 27i,4n,24p,1148b,270s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,12n,43p,1134b,344s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</us
+r/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/tex
+mf-texlive/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texmf-texlive/f
+onts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/
+public/amsfonts/cmextra/cmex8.pfb></usr/share/texmf-texlive/fonts/type1/public/
+amsfonts/cm/cmmi12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
+/cmmi6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi8.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/
+fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8
+.pfb></usr/share/texmf-texlive/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/t
+exmf-texlive/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/t
+ype1/urw/times/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri
+8a.pfb>
+Output written on readme.pdf (10 pages, 336480 bytes).
+PDF statistics:
+ 105 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on readme.dvi (5 pages, 12476 bytes).

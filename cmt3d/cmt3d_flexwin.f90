@@ -3,6 +3,7 @@ program cmt3d_flexwin
   use cmt3d_sub
   use cmt3d_sub2
   use cmt3d_sub3
+  use cmt3d_sub4
 
   implicit none
 
@@ -25,7 +26,6 @@ program cmt3d_flexwin
   print *, 'Reading cmtsolution parameters ...'
   call get_cmt(cmt_file,yr,mo,jda,ho,mi,sec,t_cmt,hdur,elat,elon,depth, &
        moment_tensor)
-
   ! assign pars to an array
   do i = 1, NPARMAX
      if (i<=NM) then
@@ -42,7 +42,7 @@ program cmt3d_flexwin
         cmt_par(i) = hdur
      endif
   enddo
-
+  call rotate_cmt(cmt_par,utm_zone,utm_center_x,utm_center_y,1)
   ! data weights 
   print *, 'Compute weights associated with each window ...'
   call setup_data_weights
@@ -58,15 +58,16 @@ program cmt3d_flexwin
   print *, 'Invert cmt parameters ...'
   call invert_cmt(A,b,dm,npar)
 
-! write the new cmtsolution file
-  print *
-  print *, 'Write new cmt solution file ...'
-  call write_new_cmtsolution(cmt_file,new_cmt_file,new_cmt_par)
-
 ! calcuate misfit reduction based upon the new solution
   print *
   print *, 'Calculate formal misfit reduction ...'
   call variance_reduction(dm,npar)
+
+! write the new cmtsolution file
+  print *
+  print *, 'Write new cmt solution file ...'
+  call rotate_cmt(new_cmt_par,utm_zone,utm_center_x,utm_center_y,-1)
+  call write_new_cmtsolution(cmt_file,new_cmt_file,new_cmt_par)
 
 ! deallocate arrays and close files  
   deallocate(A,b,dm,stat=nerr) 

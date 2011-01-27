@@ -59,7 +59,6 @@ contains
     if ((cmp .ne. 'Z') .and. (cmp .ne. 'T') .and. (cmp .ne. 'R')) &
          stop 'We only deal with Z, R, and T components at the moment'
 
-    ! CHT: why does this output as:  FMP     BHR      CI(013, 064)?
 !    if (DEBUG) write(*,'(a, a,a,a)') '       sta, cmp, net    ', &
 !         trim(kstnm), trim(kcmpnm), trim(knetwk)
 
@@ -85,7 +84,7 @@ contains
 
 
     daz = 360./NREGIONS
-    naz = 1 ! start with a water level of 1 
+    naz = 1 ! start with water level of 1 
 
     nwint = 0
     do i = 1, nfiles
@@ -103,9 +102,10 @@ contains
           endif
 
           ! dist weights
+          ! for global seismograms, this obviously has to be changed
           if (comp_name(3:3) == 'T') then
              dist_exp_weight(nwint) = love_dist_weight
-          else
+          else  
              if (nwins(i) > 1 .and. j == 1) then
                 dist_exp_weight(nwint) = pnl_dist_weight
              else
@@ -154,10 +154,12 @@ contains
 
     real :: t0, dt, t0_1, dt1
     integer :: npts, npts1, npts2, nerr,istart,iend, nshift
-    integer :: i, j, istart_d, iend_d, istart_s, iend_s
+    integer :: i, j, istart_d, iend_d, istart_s, iend_s, ii
     real, dimension(NDATAMAX,NPARMAX) :: dsyn_sngl
+    real, dimension(NDATAMAX) :: taper
     character(len=150) :: dsyn_file
     real :: dlna, cc
+    logical :: lexd
 
 
     ! read in data, syn
@@ -187,29 +189,46 @@ contains
 
     ! read in dsyns
     do i = 1, npar
-       dsyn_file = trim(syn_file) // '.' // trim(PAR_NAME(i))
-       ! wierd enough, rsac1 can not detect the non-existence of dsyn_file
-       npts1=0
-       call rsac1(dsyn_file,dsyn_sngl(:,i),npts1,t0_1,dt1,NDATAMAX,nerr)
-       if (nerr /= 0) stop 'Error reading dsynthetics' 
-       if (npts1 /= npts2 .or. abs(t0_1-t0) > EPS2 .or. abs(dt1-dt) > EPS5) then
-          print *,  trim(dsyn_file),npts1,t0_1,dt1,'; nerr = ', nerr
-          stop 'Check npts, b, dt of the derivative synthetics'
+       if (i < NML+1) then
+          dsyn_file = trim(syn_file) // '.' // trim(par_name(i))
+          ! wierd enough, rsac1 can not detect the non-existence of dsyn_file
+          npts1=0
+          inquire(file=dsyn_file,exist=lexd)
+          call rsac1(dsyn_file,dsyn_sngl(:,i),npts1,t0_1,dt1,NDATAMAX,nerr)
+          if (.not. lexd .or. nerr /= 0) then
+             print *,dsyn_file
+             stop 'Error reading dsynthetics'
+          endif
+          if (npts1 /= npts2 .or. abs(t0_1-t0) > EPS2 .or. abs(dt1-dt) > EPS5) then
+             print *,  trim(dsyn_file),npts1,t0_1,dt1,'; nerr = ', nerr
+             stop 'Check npts, b, dt of the derivative synthetics'
+          endif
        endif
 
-       if (i <= NM) then
+       if (i <= NM) then ! moment
           dsyn_sngl(1:npts,i) = dsyn_sngl(1:npts,i) / dcmt_par(i)
-       else
+       else if (i <= NML) then  ! location
           dsyn_sngl(1:npts,i) = (dsyn_sngl(1:npts,i) - syn_sngl(1:npts)) / dcmt_par(i)
+       else if (i == NML+1) then
+          dsyn_sngl(1:npts-1,i) = -(syn_sngl(2:npts)-syn_sngl(1:npts-1))/ (dt *dcmt_par(i))
+          dsyn_sngl(npts,i) = dsyn_sngl(npts-1,i)
+       else if (i == NML+2) then
+          dsyn_sngl(1:npts-1,i) = -0.5*cmt_par(i)*(dsyn_sngl(2:npts,NML+1)-dsyn_sngl(1:npts-1,NML+1))/dt
+          dsyn_sngl(npts,i)=dsyn_sngl(npts-1,i)
        endif
     enddo
+    ! hanning taper
+    do ii = istart_s,iend_s
+       taper(ii) = 0.5 * (1-cos(2*pi*(ii-istart_s)/(iend_s-istart_s)))
+    enddo
 
-    ! compute A and b taking into account data_weights
+    ! compute A and b by taking into account data_weights
     do j = 1, npar ! col
        do i = 1, j ! row
-          A1(i,j) = data_weight * sum(dsyn_sngl(istart_s:iend_s,i)*dsyn_sngl(istart_s:iend_s,j))*dble(dt)
+          A1(i,j) = data_weight * sum(taper(istart_s:iend_s)*dsyn_sngl(istart_s:iend_s,i)*dsyn_sngl(istart_s:iend_s,j))*dble(dt)
        enddo
-       b1(j) = data_weight * sum((data_sngl(istart_d:iend_d)-syn_sngl(istart_s:iend_s))*dsyn_sngl(istart_s:iend_s,j))*dble(dt)
+       b1(j) = data_weight * sum(taper(istart_s:iend_s)*(data_sngl(istart_d:iend_d)-syn_sngl(istart_s:iend_s)) &
+            *dsyn_sngl(istart_s:iend_s,j))*dble(dt)
      
     enddo
 
@@ -279,7 +298,6 @@ contains
 
   ! ------------------------------------------------------------------
 
-
   subroutine compute_new_syn(data_file,syn_file,npts,b,dt,dm)
 
     character(len=*),intent(in):: data_file, syn_file
@@ -287,7 +305,7 @@ contains
     real, intent(out) :: b, dt
     real*8, intent(in) :: dm(:)
 
-    real, dimension(NDATAMAX,NPARMAX) :: dsyn_sngl
+    real,dimension(NDATAMAX,NPARMAX) :: dsyn_sngl
     real, dimension(NDATAMAX) :: time
     integer :: nerr, i, npts1,npts2
     real :: b1, dt1
@@ -305,20 +323,28 @@ contains
 
     ! read in dsyns
     do i = 1, npar
-       dsyn_file = trim(syn_file) // '.' // trim(PAR_NAME(i))
-       npts1=0
-       call rsac1(dsyn_file,dsyn_sngl(:,i),npts1,b1,dt1,NDATAMAX,nerr)
-       if (nerr /= 0) stop 'Error reading frechet derivative synthetics'
-       if (npts1 /= npts2 .or. abs(b1-b) > EPS2 .or. abs(dt1-dt) > EPS5) &
-            stop 'Check npts, b, dt of the derivative synthetics'
+       if (i < NML+1) then
+          dsyn_file = trim(syn_file) // '.' // trim(par_name(i))
+          npts1=0
+          call rsac1(dsyn_file,dsyn_sngl(:,i),npts1,b1,dt1,NDATAMAX,nerr)
+          if (nerr /= 0) stop 'Error reading frechet derivative synthetics'
+          if (npts1 /= npts2 .or. abs(b1-b) > EPS2 .or. abs(dt1-dt) > EPS5) &
+               stop 'Check npts, b, dt of the derivative synthetics'
+       endif
        if (i <= NM) then
           dsyn_sngl(1:npts,i) = dsyn_sngl(1:npts,i) / dcmt_par(i)
-       else
-          dsyn_sngl(1:npts,i) = (dsyn_sngl(1:npts,i) - syn_sngl(1:npts)) / dcmt_par(i)
+       else if (i <= NML) then
+          dsyn_sngl(1:npts,i) = (dsyn_sngl(1:npts,i) - syn_sngl(1:npts)) / dcmt_par(i)       
+       else if (i == NML+1) then
+          dsyn_sngl(1:npts-1,i) = -(syn_sngl(2:npts)-syn_sngl(1:npts-1))/(dt *dcmt_par(i))
+          dsyn_sngl(npts,i) = dsyn_sngl(npts-1,i)
+       else if (i == NML+2) then
+          dsyn_sngl(1:npts-1,i) = -0.5*cmt_par(i)*(dsyn_sngl(2:npts,NML+1)-dsyn_sngl(1:npts-1,NML+1))/dt
+          dsyn_sngl(npts,i)=dsyn_sngl(npts-1,i)
        endif
     enddo
 
-    ! update synthetics with linearized relation
+    ! update synthetics with linearized relation (pseudo-synthetics)
     new_syn_sngl(1:npts) = syn_sngl(1:npts) + matmul(dsyn_sngl(1:npts,1:npar),dm(1:npar))
 
     ! output new synthetics as sac file

@@ -8,8 +8,11 @@ module cmt3d_variables
 
   ! inversion parameters
   character(len=150) :: cmt_file, new_cmt_file
-  integer :: npar
+  integer :: npar, utm_zone
+  real*8 :: utm_center_x, utm_center_y
+  logical :: global_coord, global_code
   real :: ddelta, ddepth, dmoment
+  character(len=3) :: par_name(NPARMAX)
 
   ! data selection
   character(len=150) :: flexwin_out_file
