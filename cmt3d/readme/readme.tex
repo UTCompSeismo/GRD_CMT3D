@@ -75,7 +75,7 @@ University of Toronto
 \begin{itemize}
 \item adapt to the output windows file from Alessia's \verb=FLEXWIN= package, which runs through data and synthetics to pick time windows with decent match between data and synthetics.
 \item eliminate bandpass filters as it should have been applied before entering \verb+FLEXWIN+.
-\item deploy proper derivatives for location parameters, in particular epicenter, in either a local or global \textit{cartesian} coordinate system (instead of $lat$ and $lon$). \blue{Note a key modification from the old} \verb+INVERSION.PAR+\blue{: $dlat/lon$ now becomes $dX_E/X_N$}.
+\item deploy proper derivatives for location parameters, in particular epicenter, in either a local or global \textit{cartesian} coordinate system (instead of $lat$ and $lon$). \blue{Note a key modification from the old} \verb+INVERSION.PAR+\blue{: $dlat/lon$ in degrees now becomes $dX_E/X_N$ in km}.
 \item incorporate centroid time shift and half duration as inversion parameters (npar=10 and 11).
 \item reflect the gist of the program, which is to use Gaussian elimination to solve the inverse problem.
 \end{itemize}
