@@ -155,7 +155,8 @@ write_flexwin_out.py MEASURE INPUT_cmt3d_flexwin_noweight
 \end{verbatim}
 Now it is possible to pad time shift and weight information to the composite output windows file, either to facility a direct evaluation of misfit function, or to eliminate the weight calculations in \verb+CMT3D+ package, which can be rather cumbersome and inflexible.
 \begin{verbatim}
-write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0.2 -r 2 -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_flexwin_withweight
+write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0.2 -r 2 \
+      -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_flexwin_withweight
 \end{verbatim}
 Obviously you can not just blindly use this package without checking. Here are two auxilliary scripts:
 \begin{verbatim}

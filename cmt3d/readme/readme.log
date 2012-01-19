@@ -1,6 +1,5 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.11.11)  27 JAN 2011 16:06
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.7)  19 JAN 2012 12:03
 entering extended mode
- restricted \write18 enabled.
  %&-line parsing enabled.
 **readme.tex
 (./readme.tex
@@ -103,10 +102,10 @@ LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
 (Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
 )
 (/usr/share/texmf-texlive/tex/latex/natbib/natbib.sty
-Package: natbib 2009/07/16 8.31 (PWD, AO)
+Package: natbib 2003/06/06 7.1 (PWD)
 \bibhang=\skip46
 \bibsep=\skip47
-LaTeX Info: Redefining \cite on input line 694.
+LaTeX Info: Redefining \cite on input line 518.
 \c@NAT@ctr=\count99
 )
 (/usr/share/texmf-texlive/tex/latex/tools/xspace.sty
@@ -276,26 +275,31 @@ and syn-thet-ics into an in-put for []\OT1/pcr/m/n/12 cmt3d_flexwin
  []
 
 
-Overfull \hbox (537.99957pt too wide) in paragraph at lines 159--159
+Overfull \hbox (33.99979pt too wide) in paragraph at lines 160--160
 []\OT1/pcr/m/n/12 write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0
-.2 -r 2 -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_flexwin_withweight
-[] 
+.2 -r 2 \[] 
  []
 
 
-Overfull \hbox (26.79979pt too wide) in paragraph at lines 165--165
+Overfull \hbox (84.39977pt too wide) in paragraph at lines 160--160
+[]      \OT1/pcr/m/n/12 -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_fl
+exwin_withweight[] 
+ []
+
+
+Overfull \hbox (26.79979pt too wide) in paragraph at lines 166--166
 []\OT1/pcr/m/n/12 plot_data_and_syn.pl -d data_dir,data_ext -s syn_dir,syn_ext 
 -m cmt \[] 
  []
 
 [3]
-Overfull \hbox (5.1998pt too wide) in paragraph at lines 183--183
+Overfull \hbox (5.1998pt too wide) in paragraph at lines 184--184
 []\OT1/pcr/m/n/12 .true.  .true. 0.0             -- zero_trace,double_couple,da
 mping[] 
  []
 
 [4]
-Overfull \hbox (28.99222pt too wide) in paragraph at lines 204--205
+Overfull \hbox (28.99222pt too wide) in paragraph at lines 205--206
 []\OT1/pcr/m/n/12 weigh_data_files\OT1/ptm/m/n/12 , and not im-port-ing weights
  di-rectly from the in-put file by []\OT1/pcr/m/n/12 read_weight\OT1/ptm/m/n/12
  .
@@ -303,21 +307,21 @@ Overfull \hbox (28.99222pt too wide) in paragraph at lines 204--205
 
 [5] [6] [7]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 305.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 306.
  <rot.png, id=41, 710.655pt x 366.36874pt>
 File: rot.png Graphic file (type png)
  <use rot.png> [8 <./rot.png (PNG copy)>] [9]
-Overfull \hbox (1.93327pt too wide) in paragraph at lines 401--405
+Overfull \hbox (1.93327pt too wide) in paragraph at lines 402--406
 []\OT1/pcr/m/n/12 process_syn_new.pl \OT1/ptm/m/n/12 (global/regional) or []\OT
 1/pcr/m/n/12 process_trinet_syn_new.pl\OT1/ptm/m/n/12 (socal), 
  []
 
 [10] (./readme.aux) ) 
 Here is how much of TeX's memory you used:
- 2849 strings out of 495061
- 32413 string characters out of 1182620
- 91478 words of memory out of 3000000
- 5965 multiletter control sequences out of 15000+50000
+ 2757 strings out of 495061
+ 31260 string characters out of 1182622
+ 89911 words of memory out of 3000000
+ 5873 multiletter control sequences out of 15000+50000
  24268 words of font info for 65 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,12n,43p,1134b,344s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -337,7 +341,7 @@ nts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8
 exmf-texlive/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/t
 ype1/urw/times/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri
 8a.pfb>
-Output written on readme.pdf (10 pages, 336520 bytes).
+Output written on readme.pdf (10 pages, 336531 bytes).
 PDF statistics:
  105 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
