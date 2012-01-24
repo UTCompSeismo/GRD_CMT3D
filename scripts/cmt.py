@@ -322,7 +322,7 @@ def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=1,utm=0,nevent=1,ext=
       depth=cmt_par[6]; x=cmt_par[7];  y=cmt_par[8] 
     else:
       depth=cmt_par[6,k]; x=cmt_par[7,k];  y=cmt_par[8,k]  
-    dnew=depth+dlocation; xnew=x+dlocation; ynew=y+dlocation # name holders again
+    dnew=depth+ddepth; xnew=x+dlocation; ynew=y+dlocation # name holders again
 
     # moment derivatives
     for i in range(0,6):
