@@ -74,12 +74,12 @@ University of Toronto
 \verb=CMT3D_FLEXWIN= is re-written from my old \verb=CMT3D= program to
 \begin{itemize}
 \item adapt to the output windows file from Alessia's \verb=FLEXWIN= package, which runs through data and synthetics to pick time windows with decent match between data and synthetics.
-\item eliminate bandpass filters as it should have been applied before entering \verb+FLEXWIN+.
+\item eliminate bandpass filter as it should have been applied before entering \verb+FLEXWIN+.
 \item deploy proper derivatives for location parameters, in particular epicenter, in either a local or global \textit{cartesian} coordinate system (instead of $lat$ and $lon$). \blue{Note a key modification from the old} \verb+INVERSION.PAR+\blue{: $dlat/lon$ in degrees now becomes $dX_E/X_N$ in km}.
 \item incorporate centroid time shift and half duration as inversion parameters (npar=10 and 11).
 \item reflect the gist of the program, which is to use Gaussian elimination to solve the inverse problem.
 \end{itemize}
-What still remains to be added is the possiblity of \verb+CMT3D+ inversion for multiple subevents, which may be useful if $N_{event}$ is relatively small, and may be handy when a comparsion of efficiency to \verb+CMT3D_CG+ is expected.
+What still remains to be added is the possiblity of \verb+CMT3D+ inversion for multiple subevents, which may be useful if $N_{event}$ is relatively small, and may be handy for efficiency comparisons to \verb+CMT3D_CG+.
 
 
 %===========================================================
@@ -102,10 +102,10 @@ Depending on what coordinate system you choose to calculate derivatives and run 
 \begin{itemize}
 \item basin code, local UTM coordinates (utm $\in[1,60]$): \\
    \verb+ext=['Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','dep','lon','lat']+ \\
-I retained this option for the continuity from the old version. Derivatives for $M$ are in RTP coordinate system, and location is in depth (that is opposite from radius), east and north (as in UTM coodinate). The key difference is that derivatives for $X_E$ and $X_N$ are not simple perturbations on $lon$ and $lat$, but accurately calculated from UTM transformations.
+I kept this option to retain continuity from the old version. Derivatives for $M$ are in RTP coordinate system, and location is in depth (that is opposite from radius), east and north (as in UTM coodinate). The \blue{key difference} is that derivatives for $X_E$ and $X_N$ are not simple perturbations on $lon$ and $lat$, but accurately calculated from UTM transformations.
 \item global code, local RTP coordinates (utm $=0$):\\
    \verb+ext=['Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','rrr','ttt','ppp']+\\
-Here consistent coordinate system is used for all parameters (moment tensor and location), note here $X_r$ is in the opposite sense from depth, $X_\tht$ simple refers to $X_S$ and $X_\phi$ refers to $X_E$.
+Here consistent coordinate system is used for all parameters (moment tensor and location). \blue{Note here $X_r$ is in the opposite sense from depth}, $X_\tht$ simple refers to $X_S$ and $X_\phi$ refers to $X_E$.
 \item global code, global XYZ coordinates (utm $=-1$):\\
    \verb+ext=['Mxx','Myy','Mzz','Mxy','Mxz','Myz','xxx','yyy','zzz']+\\
 This coordinate system may not be invoked for either local or global events. However, it may come in handy when multiple sub-event inversions are performed in the future.
@@ -119,7 +119,7 @@ Python script and modules are provided in \verb+scripts+ directory to facilitate
  gen_cmt_der('CMTSOLUTION',npar=9,dmoment=1.e24,
               ddepth=2,dlocation=2,utm=0)
 \end{verbatim}
-\item Also as indicated by the theory section, derivatives for centroid time and half duration simple depend on the synthetics, therefore no extra simulation is necessary.
+\item Also as indicated by the theory section, derivatives for centroid time and half duration simply depend on the synthetics, therefore no extra simulation is necessary.
 \item After simulations for these derivative \verb+CMTSOLUTION+s finish, collect synthetic seismograms, convert them to sac files and add proper extension to the sac files according to the choice of coordinate system.  
 
 \item Note synthetics for the original \verb+CMTSOLUTION+ do not need to be obtained through an extra simulation, a simple linear combination of moment tensor derivatives can be realized by:
@@ -141,22 +141,22 @@ After gather raw data from IRIS or SCEDC, and collect synthetics as well derivat
 For detailed usage, simple type \verb+process_ds.py+. The outcomes of this script are
 \begin{itemize}
 \item filtered data and (derivative) synthetics in \verb+data_6_30+ and \verb+syn_6_30+. 
-\item an input file to \verb+FLEXWIN+ named \verb+INPUT_flexwin+ is generated.
+\item an input file to \verb+FLEXWIN+ named \verb+INPUT_flexwin_6_30+ is generated.
 \end{itemize}
 
 \subsection{Executing FLEXWIN}
-After choosing the right parameters and user functions for flexwin package (please refer to Alessia's 2009 paper for details), 
+After choosing the right parameters in \verb=PAR_FILE= and user functions for flexwin package (please refer to FLEXWIN manual for details), 
 \begin{verbatim}
-./flexwin < INPUT_flexwin > OUTPUT_flexwin
+./flexwin < INPUT_flexwin_6_30 > OUTPUT_flexwin_6_30
 \end{verbatim}
-and then cat the output files for individual pairs of data and synthetics into an input for \verb=cmt3d_flexwin= package.
+After running flexwin through data and synthetics filtered at various period bands,  all individual windows files in \verb+MEASURE_t1_t2+ directories can be cat into an input for \verb=cmt3d_flexwin= package.
 \begin{verbatim}
-write_flexwin_out.py MEASURE INPUT_cmt3d_flexwin_noweight
+write_flexwin_out.py MEASURE_6_30 MEASURE_20_50 INPUT_cmt3d_flexwin_noweight
 \end{verbatim}
-Now it is possible to pad time shift and weight information to the composite output windows file, either to facility a direct evaluation of misfit function, or to eliminate the weight calculations in \verb+CMT3D+ package, which can be rather cumbersome and inflexible.
+Now it is possible to pad time shift and weight information to the composite output windows file, either to facilitate a direct evaluation of misfit function, or to eliminate the weight calculations in \verb+CMT3D+ package, which can be rather cumbersome and inflexible.
 \begin{verbatim}
-write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0.2 -r 2 \
-      -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_flexwin_withweight
+write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0.2 -r 2 -t \
+      -D data -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_flexwin_withweight
 \end{verbatim}
 Obviously you can not just blindly use this package without checking. Here are two auxilliary scripts:
 \begin{verbatim}
@@ -201,10 +201,10 @@ Only windows from this output file will be used to perform time integration in a
 All other parameters are pretty self-explanatory:
 \begin{itemize}
  \item Number of parameters to be inverted can only be 6(moment-only), 7(moment+depth), 9(moment+locations). Values of integer \verb+utm+ indicate the coordinate system used for the derivatives and source inversion. Values of \verb+utm_center_x+ and \verb+utm_center_y+ are used only when \verb+utm+$\in [1,60]$.
- \item The derivative synthetics should have been calculated based on the \verb=ddelta=, \verb=ddepth=, \verb=dmoment= values. However, notice that strictly speaking, only the ones for moment are derivative synthetics, the ones for depth, longitude, and latitude (or R, S, E depending on coordinate system) are actual synthetics, from which you then need to subtract the old synthetics and divide by ddepth or ddelta (refer to Appendix for more details). 
+ \item The derivative synthetics should have been calculated based on the \verb=ddelta=, \verb=ddepth=, \verb=dmoment= values. However, notice that strictly speaking, only the ones for moment are actual derivative synthetics; the ones for depth, longitude, and latitude (or R, S, E depending on coordinate system or utm) are actual synthetics, from which the code subtracts the old synthetics and divides it by ddepth or ddelta (refer to Appendix for more details). 
  \item Weighting subroutine \verb=compute_data_weights()=  needs to be tinkered if you choose to \verb=weigh_data_files=, and not importing weights directly from the input file by \verb=read_weight=. The idea is that you utilize the \verb=dist_km=, \verb=dist_deg=, \verb=azimuth=, and other file information from the sac headers to come up with a sensible weighting scheme for your particular scale/region.
- \item Station correction is used to align the data with the synthetics to accommondate 3D path effects that may skew your source inversion results.
- \item Different constraints on the moment-tensor are allowed, including zero-trace and double-couple. To improve the stability of the matrix inverse, damping is also allowed before Gaussian elimination.
+ \item Station correction is used to align the data with the synthetics to accommondate 3D path effects that may bias your source inversion results.
+ \item Different constraints on the moment-tensor are allowed, including zero-trace and double-couple. To improve the stability of the matrix inverse (when only very few windows are used), damping is also allowed before Gaussian elimination.
  \item Finally synthetics for the new cmt solution can be written, however, notice that these are obtained from `linearized' approximation, not from an actual SEM simulation.
  \end{itemize}
 
@@ -216,9 +216,10 @@ Some more words on weighting:
 \begin{verbatim}
         data_weights(nwint) =  cmp_weight(nwint) &
              * (dist/REF_DIST) ** dist_exp_weight(nwint) &
+             * corr(nwint) ** corr_exp_weight(nwint) & 
              / ( naz(k) ** az_exp_weight)
 \end{verbatim}
- where component weights are applied linearly, distance and azimuth weights are applied exponentially. \verb=naz(k)= is the number of traces available in a particular azimuth (\verb=+1=). One can set \verb=az_exp_weight= to be 0 to mute out the azimuthal effect, same thing with distance weights, and component weights.
+ where component weights are applied linearly, distance and azimuth weights are applied exponentially (such that $0$ means no weight and $1$ means linear weight). \verb=naz(k)= is the number of traces available in a particular azimuth (\verb=+1=). One can set \verb=az_exp_weight= to be 0 to mute out the azimuthal effect, the same for distance weights.
 
 \end{itemize}
 This package has been fully tested for $6,7,9,10$ parameter inversions based on synthetic data.
@@ -332,7 +333,7 @@ After the first two simple rotations ($Z (\phi)$ and $Y(\tht)$) demonstrated by 
 -\sin\phi & \cos\phi & 0 \\ 0 & 0 & 1 \end{bmatrix}
 \begin{bmatrix} X \\ Y \\ Z\end{bmatrix}
 \en
-This is not the end of story, as the usual order of local coordinate system is $(r,\tht,\phi)$ instead of $(\tht,\phi,r)$. Therefore two extra rotations ($Y(-\Deg{90})$ and $X (-\Deg{90})$) are needed, which gives an extra (left-applied) rotation matrix
+This is not the end of story, as the usual order of local coordinate system is $(r,\tht,\phi)$ instead of $(\tht,\phi,r)$. Therefore two extra rotations ($Y(-\Deg{90})$ and $X (-\Deg{90})$) are needed, which give an extra (left-applied) rotation matrix
 \eq
 \begin{bmatrix} 1 & 0  &  0 \\ 
 0 & \cos(-\Deg{90}) & \sin(-\Deg{90}) \\ 
@@ -366,12 +367,12 @@ R=\begin{bmatrix}
 
 %============================================
 
-\section{Testing}
+\section{Testing (further update awaits)}
 
 Two types of datasets are provided to accurately test this inversion package, one with station correction, and one without. Synthetics and derivative synthetics for corresponding \verb=CMTSOLUTION= are always in \verb=syn_T006_T030=. No pre-processing are needed for these dataset as they have gone through all the procedures. Although to achieve inversion result that is accurate to several digits after the decimal point, several tweaks with the usual pre-processing procedures have to be done.
 
 \begin{itemize}
-\item  we should not use \verb=-h= in the synthetics processing to ensure that the synthetics data and the derivative synthetics go through the exact same set of processing procedures. we also need to take out the \verb=rtrend= and \verb=rmean= line in the filtering steps of \verb=process_syn_new.pl= and \verb=process_cal_data.pl=. Since the data and synthetics presented in \verb=test_dataset= have gone through the script:
+\item  \blue{(obsolete, needs fix)} we should not use \verb=-h= in the synthetics processing to ensure that the synthetics data and the derivative synthetics go through the exact same set of processing procedures. we also need to take out the \verb=rtrend= and \verb=rmean= line in the filtering steps of \verb=process_syn_new.pl= and \verb=process_cal_data.pl= (\red{?}). Since the data and synthetics presented in \verb=test_dataset= have gone through the script:
 \begin{verbatim}
   process_data_and_syn.pl  -d data,sac -s syn,  \  
          -0 -m CMTSOLUTION -a station_file   \

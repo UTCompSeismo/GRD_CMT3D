@@ -9,13 +9,12 @@ contains
 
   subroutine rotate_cmt(cmt_par,utm_zone,utm_center_x,utm_center_y,DIRECTION)
 
-    ! DIRECTION = 1: entering cmt_par(1:6) - Mij, cmt_par(7:9) - dep, lon, lat
-    ! cmt_par will always enter the code carrying [M(rtp)(rtp), dep, lat, lon] when DIRECTION = 1
-    ! or leaving the code when DIRECTION = -1.
-    ! However, cmt_par carries parameters of different meanings 
-    ! when leaving at DIRECTION=1 and entering when DRECTION=-1,
-    ! and one has to make sure how derivative synthetics are calculated 
-    ! M(rtp)(rtp)'s, depth, lat,lon or X,Y,Z) correspondingly
+    ! DIRECTION = 1/-1: entering/leaving with cmt_par(1:6) - Mij, cmt_par(7:9) (i.e. dep, lon, lat)
+    ! and leaving/entering with cmt_par carrying parameters 
+    ! whose meaning are dictated by utm_zone
+    ! and one has to make sure derivative synthetics are calculated 
+    ! to utm_zone selected 
+    ! M(rtp)(rtp)'s, depth, lat,lon or in terms of global (X,Y,Z) 
 
     real*8, intent(inout) :: cmt_par(NPARMAX)
     real*8, intent(inout) :: utm_center_x, utm_center_y
@@ -59,7 +58,7 @@ contains
           endif
           cmt_par(7:9)=loc(1:3)  ![R,T,P] in local or [X,Y,Z] in global
           ! derivatives should be calculated for above output coordinate system
-       else ! global to local coordinates
+       else ! DIRECTION = -1 : global to local coordinates
           if (global_coord) then
              gl=cmt_par(7:9)/sqrt(sum(cmt_par(7:9)**2)) ! global [X,Y,Z]
              th=acos(gl(3))
@@ -80,7 +79,7 @@ contains
              cmt_par(4)=moment(1,2); cmt_par(5)=moment(1,3); cmt_par(6)=moment(2,3)
              cmt_par(7)=R_EARTH-loc(1); cmt_par(8)=elon; cmt_par(9)=elat  ! [depth,lon,lat]
              if (abs(loc(2)) > EPS5 .or. abs(loc(3)) > EPS5) stop 'Error loc(2,3)'
-          else ! global cmt, but only need to update new location
+          else ! RTP, global cmt, but only need to update new location
              call calc_rot_matrix(utm_center_x,utm_center_y,rmat) !(elon,elat,rmat)
              gl=matmul(rmat,cmt_par(7:9)); gl=gl/sqrt(sum(gl**2)) ! local [R,T,P] to global [X,Y,Z]
              th=acos(gl(3))

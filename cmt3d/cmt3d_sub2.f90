@@ -209,10 +209,10 @@ contains
           dsyn_sngl(1:npts,i) = dsyn_sngl(1:npts,i) / dcmt_par(i)
        else if (i <= NML) then  ! location
           dsyn_sngl(1:npts,i) = (dsyn_sngl(1:npts,i) - syn_sngl(1:npts)) / dcmt_par(i)
-       else if (i == NML+1) then
+       else if (i == NML+1) then ! time shift
           dsyn_sngl(1:npts-1,i) = -(syn_sngl(2:npts)-syn_sngl(1:npts-1))/ (dt *dcmt_par(i))
           dsyn_sngl(npts,i) = dsyn_sngl(npts-1,i)
-       else if (i == NML+2) then
+       else if (i == NML+2) then ! half duration
           dsyn_sngl(1:npts-1,i) = -0.5*cmt_par(i)*(dsyn_sngl(2:npts,NML+1)-dsyn_sngl(1:npts-1,NML+1))/dt
           dsyn_sngl(npts,i)=dsyn_sngl(npts-1,i)
        endif

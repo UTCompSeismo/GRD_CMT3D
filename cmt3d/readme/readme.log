@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.7)  19 JAN 2012 12:03
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.7)  24 JAN 2012 12:18
 entering extended mode
  %&-line parsing enabled.
 **readme.tex
@@ -263,27 +263,21 @@ CMTSOLUTION\OT1/ptm/m/n/12 s fin-ish, col-lect syn-thetic seis-mo-grams,
  []
 
 [2]
-Overfull \hbox (0.94746pt too wide) in paragraph at lines 148--149
-\OT1/ptm/m/n/12 After choos-ing the right pa-ram-e-ters and user func-tions for
- flexwin pack-age (please re-fer to Alessia's
+Overfull \hbox (77.19977pt too wide) in paragraph at lines 155--155
+[]\OT1/pcr/m/n/12 write_flexwin_out.py MEASURE_6_30 MEASURE_20_50 INPUT_cmt3d_f
+lexwin_noweight[] 
  []
 
 
-Overfull \hbox (29.35225pt too wide) in paragraph at lines 152--153
-\OT1/ptm/m/n/12 and then cat the out-put files for in-di-vid-ual pairs of data 
-and syn-thet-ics into an in-put for []\OT1/pcr/m/n/12 cmt3d_flexwin
- []
-
-
-Overfull \hbox (33.99979pt too wide) in paragraph at lines 160--160
+Overfull \hbox (55.59978pt too wide) in paragraph at lines 160--160
 []\OT1/pcr/m/n/12 write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0
-.2 -r 2 \[] 
+.2 -r 2 -t \[] 
  []
 
 
-Overfull \hbox (84.39977pt too wide) in paragraph at lines 160--160
-[]      \OT1/pcr/m/n/12 -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_cmt3d_fl
-exwin_withweight[] 
+Overfull \hbox (141.99974pt too wide) in paragraph at lines 160--160
+[]      \OT1/pcr/m/n/12 -D data -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_
+cmt3d_flexwin_withweight[] 
  []
 
 
@@ -307,11 +301,11 @@ Overfull \hbox (28.99222pt too wide) in paragraph at lines 205--206
 
 [5] [6] [7]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 306.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 307.
  <rot.png, id=41, 710.655pt x 366.36874pt>
 File: rot.png Graphic file (type png)
  <use rot.png> [8 <./rot.png (PNG copy)>] [9]
-Overfull \hbox (1.93327pt too wide) in paragraph at lines 402--406
+Overfull \hbox (1.93327pt too wide) in paragraph at lines 403--407
 []\OT1/pcr/m/n/12 process_syn_new.pl \OT1/ptm/m/n/12 (global/regional) or []\OT
 1/pcr/m/n/12 process_trinet_syn_new.pl\OT1/ptm/m/n/12 (socal), 
  []
@@ -341,7 +335,7 @@ nts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8
 exmf-texlive/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/t
 ype1/urw/times/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri
 8a.pfb>
-Output written on readme.pdf (10 pages, 336531 bytes).
+Output written on readme.pdf (10 pages, 337631 bytes).
 PDF statistics:
  105 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
