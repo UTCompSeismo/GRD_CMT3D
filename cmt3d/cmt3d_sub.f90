@@ -23,24 +23,25 @@ contains
     read(IOPAR,'(a)') new_cmt_file
     read(IOPAR,'(i2)',iostat=ios,advance='no') npar
     if (ios /= 0) stop 'Error reading npar'
-    utm_zone=-2
-    read(IOPAR,*,iostat=ios) utm_zone, utm_center_x, utm_center_y
-    if (ios /= 0 .or. (utm_zone <= 60 .and. utm_zone >= 1)) then
-       global_code=.false.; global_coord=.false.
-       utm_zone=11; utm_center_x=0.; utm_center_y=0.
+    global_coord=.false.
+
+    read(IOPAR,*,iostat=ios) global_coord
+    
+    if (.not. global_coord) then
        par_name = (/'Mrr','Mtt','Mpp','Mrt','Mrp', 'Mtp','dep','lon','lat', &
-            'ctm','hdr'/)  
-    else if (utm_zone == 0) then
-       global_code=.true.; global_coord=.false.
-       par_name = (/'Mrr','Mtt','Mpp','Mrt','Mrp', 'Mtp','rrr','ttt','ppp', &
             'ctm','hdr'/) 
-    else if (utm_zone == -1) then
-       global_coord=.true.; global_code=.true.
+       SCALE_PAR =  &
+            (/ SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, &
+            SCALE_MOMENT, SCALE_MOMENT, SCALE_DEPTH, SCALE_DELTA, SCALE_DELTA, &
+            SCALE_CTIME, SCALE_HDUR /)
+    else 
        par_name = (/'Mxx','Myy','Mzz','Mxy','Mxz', 'Myz','xxx','yyy','zzz', &
             'ctm','hdr'/) 
-       if (npar < 9) stop 'For utm=-1, set at least npar = 9'
-    else
-       stop 'Error reading utm_zone (1~60 or 0 for global)'
+       if (npar == 7) stop 'depth only inversion is not allowed in global coordinates'
+       SCALE_PAR =  &
+            (/ SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, &
+            SCALE_MOMENT, SCALE_MOMENT, SCALE_DEPTH, SCALE_DEPTH, SCALE_DEPTH, &
+            SCALE_CTIME, SCALE_HDUR /)
     endif
      
     read(IOPAR,*) ddelta,ddepth,dmoment
@@ -63,7 +64,6 @@ contains
     read(IOPAR,*) comp_z_weight, comp_t_weight, comp_r_weight, &
          az_exp_weight, &
          pnl_dist_weight, rayleigh_dist_weight, love_dist_weight
-
     read(IOPAR,*) station_correction
  
     read(IOPAR,*) zero_trace_inversion,double_couple_inversion,lambda
@@ -154,7 +154,7 @@ contains
        read(IOWIN,'(a)') syn_file
        read(IOWIN,*) nwins(i)
        if (nwins(i) < 0) stop 'Check nwins(i) '
-       if (DEBUG) print *, trim(data_file), ' ', trim(syn_file)
+!       if (DEBUG) print *, trim(data_file), ' ', trim(syn_file)
        inquire(file=data_file,exist=lexd)
        inquire(file=syn_file,exist=lexs)
        if (.not. (lexd .and. lexs)) then

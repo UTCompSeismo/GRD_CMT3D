@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.7)  24 JAN 2012 12:18
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.7)  30 JAN 2012 09:56
 entering extended mode
  %&-line parsing enabled.
 **readme.tex
@@ -224,25 +224,25 @@ File: omsptm.fd
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 76.
-LaTeX Font Info:    Try loading font information for U+msa on input line 78.
+LaTeX Font Info:    Try loading font information for U+msa on input line 82.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 78.
+LaTeX Font Info:    Try loading font information for U+msb on input line 82.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 78.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 82.
 
 (/usr/share/texmf-texlive/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
 LaTeX Font Info:    Font shape `U/lasy/b/n' in size <8> not available
-(Font)              Font shape `U/lasy/m/n' tried instead on input line 78.
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 82.
 LaTeX Font Info:    Font shape `U/lasy/b/n' in size <6> not available
-(Font)              Font shape `U/lasy/m/n' tried instead on input line 78.
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 82.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 88.
 
@@ -257,87 +257,103 @@ Package Fancyhdr Warning: \headheight is too small (0.0pt):
 
 
 ]
-Overfull \hbox (0.79004pt too wide) in paragraph at lines 123--124
+Underfull \hbox (badness 10000) in paragraph at lines 103--105
+
+ []
+
+
+Overfull \hbox (0.79004pt too wide) in paragraph at lines 121--122
 []\OT1/ptm/m/n/12 After sim-u-la-tions for these deriva-tive []\OT1/pcr/m/n/12 
 CMTSOLUTION\OT1/ptm/m/n/12 s fin-ish, col-lect syn-thetic seis-mo-grams,
  []
 
 [2]
-Overfull \hbox (77.19977pt too wide) in paragraph at lines 155--155
+Overfull \hbox (77.19977pt too wide) in paragraph at lines 153--153
 []\OT1/pcr/m/n/12 write_flexwin_out.py MEASURE_6_30 MEASURE_20_50 INPUT_cmt3d_f
 lexwin_noweight[] 
  []
 
 
-Overfull \hbox (55.59978pt too wide) in paragraph at lines 160--160
+Overfull \hbox (55.59978pt too wide) in paragraph at lines 158--158
 []\OT1/pcr/m/n/12 write_flexwin_shift_weight.py -c 2/2/1 -d 1.15/0.55/0.78 -a 0
 .2 -r 2 -t \[] 
  []
 
 
-Overfull \hbox (141.99974pt too wide) in paragraph at lines 160--160
+Overfull \hbox (141.99974pt too wide) in paragraph at lines 158--158
 []      \OT1/pcr/m/n/12 -D data -s MEASURE  INPUT_cmt3d_flexwin_noweight INPUT_
 cmt3d_flexwin_withweight[] 
  []
 
 
-Overfull \hbox (26.79979pt too wide) in paragraph at lines 166--166
+Overfull \hbox (26.79979pt too wide) in paragraph at lines 164--164
 []\OT1/pcr/m/n/12 plot_data_and_syn.pl -d data_dir,data_ext -s syn_dir,syn_ext 
 -m cmt \[] 
  []
 
-[3]
-Overfull \hbox (5.1998pt too wide) in paragraph at lines 184--184
+
+Overfull \hbox (5.1998pt too wide) in paragraph at lines 182--182
 []\OT1/pcr/m/n/12 .true.  .true. 0.0             -- zero_trace,double_couple,da
 mping[] 
  []
 
-[4]
-Overfull \hbox (28.99222pt too wide) in paragraph at lines 205--206
+[3]
+Overfull \hbox (28.99222pt too wide) in paragraph at lines 203--204
 []\OT1/pcr/m/n/12 weigh_data_files\OT1/ptm/m/n/12 , and not im-port-ing weights
  di-rectly from the in-put file by []\OT1/pcr/m/n/12 read_weight\OT1/ptm/m/n/12
  .
  []
 
-[5] [6] [7]
+[4] [5]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 307.
- <rot.png, id=41, 710.655pt x 366.36874pt>
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 248.
+
+
+LaTeX Warning: Reference `eq:first-second-der' on page 6 undefined on input lin
+e 248.
+
+[6] [7] <rot.png, id=40, 710.655pt x 366.36874pt>
 File: rot.png Graphic file (type png)
  <use rot.png> [8 <./rot.png (PNG copy)>] [9]
-Overfull \hbox (1.93327pt too wide) in paragraph at lines 403--407
+Overfull \hbox (1.93327pt too wide) in paragraph at lines 401--405
 []\OT1/pcr/m/n/12 process_syn_new.pl \OT1/ptm/m/n/12 (global/regional) or []\OT
 1/pcr/m/n/12 process_trinet_syn_new.pl\OT1/ptm/m/n/12 (socal), 
  []
 
-[10] (./readme.aux) ) 
+[10] (./readme.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 2757 strings out of 495061
- 31260 string characters out of 1182622
- 89911 words of memory out of 3000000
- 5873 multiletter control sequences out of 15000+50000
- 24268 words of font info for 65 fonts, out of 3000000 for 9000
+ 2754 strings out of 495061
+ 31231 string characters out of 1182622
+ 89903 words of memory out of 3000000
+ 5872 multiletter control sequences out of 15000+50000
+ 22584 words of font info for 63 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,12n,43p,1134b,344s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</us
-r/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/tex
-mf-texlive/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texmf-texlive/f
-onts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/
-public/amsfonts/cmextra/cmex8.pfb></usr/share/texmf-texlive/fonts/type1/public/
-amsfonts/cm/cmmi12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
-/cmmi6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi8.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/
-fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/p
-ublic/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
-nts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8
-.pfb></usr/share/texmf-texlive/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/t
-exmf-texlive/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/t
-ype1/urw/times/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri
+{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</usr/share/texmf-texli
+ve/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/amsfonts/cm/cmbx8.pfb></usr/share/texmf-texlive/fonts/type1/public/a
+msfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cme
+xtra/cmex8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi12.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/sh
+are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/type1/public/
+amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
+msy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy6.pfb></
+usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/te
+xmf-texlive/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texmf-texlive/fonts/
+type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmr
 8a.pfb>
-Output written on readme.pdf (10 pages, 337631 bytes).
+Output written on readme.pdf (10 pages, 331037 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
+ 101 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

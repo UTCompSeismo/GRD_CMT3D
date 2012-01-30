@@ -8,9 +8,8 @@ module cmt3d_variables
 
   ! inversion parameters
   character(len=150) :: cmt_file, new_cmt_file
-  integer :: npar, utm_zone
-  real*8 :: utm_center_x, utm_center_y
-  logical :: global_coord, global_code
+  integer :: npar
+  logical :: global_coord
   real :: ddelta, ddepth, dmoment
   character(len=3) :: par_name(NPARMAX)
 
@@ -41,7 +40,9 @@ module cmt3d_variables
   real, dimension(NDATAMAX) :: data_sngl, syn_sngl, new_syn_sngl
   character(len=150) :: data_file, syn_file
     
-  
+  ! scales of cmt pars
+  real*8 :: SCALE_PAR(NPARMAX)
+
 end module cmt3d_variables
 
 ! unscaled cmt pars:  cmt_par, new_cmt_par

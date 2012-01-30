@@ -20,13 +20,6 @@ module cmt3d_constants
 ! maximum number of parameters
   integer, parameter  :: NPARMAX = 11
 
-! scales and names of derivative paramete
-!note: coordinates for location is set to be depth,longitude and latituders
-  real*8, parameter :: SCALE_PAR(NPARMAX) =  &
-       (/ SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, &
-       SCALE_MOMENT, SCALE_MOMENT, SCALE_DEPTH, SCALE_DELTA, SCALE_DELTA, &
-        SCALE_CTIME, SCALE_HDUR /)   
-
 ! maximum npts for records
   integer, parameter :: NDATAMAX = 30000
 
@@ -68,9 +61,6 @@ module cmt3d_constants
 ! Earth's radius for depth scaling
   integer, parameter :: R_EARTH=6371  ! km
 
-! flag for projection from latitude/longitude to UTM, and back
-  integer, parameter :: ILONGLAT2UTM = 0, IUTM2LONGLAT = 1
-  logical, parameter :: SUPPRESS_UTM_PROJECTION=.false.
 
 end module cmt3d_constants
 

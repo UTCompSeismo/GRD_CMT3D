@@ -61,8 +61,8 @@ def read_cmt(cmt_file,cmt_par,npar,utm=0,nevent=1,scale_par=array([1.0e22,1.0e22
       [loc_x,loc_y,loc_z]=rotate_loc(lon,lat,R_EARTH-depth,0,0,local2global=True)
       [mrr,mtt,mpp,mrt,mrp,mtp]=rotate_cmt(lon,lat,mrr,mtt,mpp,mrt,mrp,mtp,local2global=True)
       depth=loc_x; lon=loc_y; lat=loc_z
-    else: # utm=0, global code, local [R, T, P]
-      depth=R_EARTH-depth; lon=0.; lat=0.
+#    else: # utm=0, global code, local [R, T, P]
+#      depth=R_EARTH-depth; lon=0.; lat=0.
     
     a=array([mrr,mtt,mpp,mrt,mrp,mtp,depth,lon,lat,tshift,hdur])
 
@@ -139,17 +139,18 @@ def write_cmt(cmt_file,cmt_par,npar,ref_cmt_file,utm=0,nevent=1,utm_center=[0.,0
         if ist != 0:
           print 'Error running utm2sph program'; return -4
         lon=float(out.split()[2]); lat=float(out.split()[5])  #lon,lat (in degrees)
-      if npar >= 7:
+      if npar >= 7: # depth
         depth=cmt_par_unscaled[6]
     elif utm == 0: # global code, [R,T,P]
       if npar >= 9:
-        loc=cmt_par_unscaled[6:9]
-        [x,y,z]=rotate_loc(lon,lat,loc[0],loc[1],loc[2],local2global=True)
-        mgl=rotate_cmt(lon,lat,mloc[0],mloc[1],mloc[2],mloc[3],mloc[4],mloc[5],local2global=True)
-        [lon, lat, r]=xyz2sph(x,y,z); depth=R_EARTH-r
-        mloc=rotate_cmt(lon,lat,mgl[0],mgl[1],mgl[2],mgl[3],mgl[4],mgl[5],local2global=False)
-      elif npar == 7:
-        depth=R_EARTH-cmt_par_unscaled[6]
+        [lon,lat]=cmt_par_unscaled[7:9]
+#        loc=cmt_par_unscaled[6:9]
+#        [x,y,z]=rotate_loc(lon,lat,loc[0],loc[1],loc[2],local2global=True)
+#        mgl=rotate_cmt(lon,lat,mloc[0],mloc[1],mloc[2],mloc[3],mloc[4],mloc[5],local2global=True)
+#        [lon, lat, r]=xyz2sph(x,y,z); depth=R_EARTH-r
+#        mloc=rotate_cmt(lon,lat,mgl[0],mgl[1],mgl[2],mgl[3],mgl[4],mgl[5],local2global=False)
+      if npar >= 7:
+        depth=cmt_par_unscaled[6]
     elif utm == -1: # global code, [X,Y,Z]
       if npar >= 9:
         loc=cmt_par_unscaled[6:9]
@@ -286,7 +287,7 @@ def mij2dc(M):
 
 # ====================================
 # extension name array is just a name holder, the deriatives may differ from the names they are called.
-def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=1,utm=0,nevent=1,ext=['Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','dep','lon','lat']):
+def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=0.05,utm=0,nevent=1,ext=['Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','dep','lon','lat']):
 
  # ddepth and dlocation are in terms of kms  
   if not os.path.isfile(cmt):
@@ -294,8 +295,8 @@ def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=1,utm=0,nevent=1,ext=
 
   if utm > 60 or utm < -1:
     print 'Check utm in [-1,60]'; return -2 
-  elif utm == 0:
-    ext[6]='rrr'; ext[7]='ttt'; ext[8]='ppp'
+#  elif utm == 0:
+#    ext[6]='rrr'; ext[7]='ttt'; ext[8]='ppp'
  #   ext=['Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','rrr','sss','eee']
   elif utm == -1:
     ext[0]='Mxx'; ext[1]='Myy'; ext[2]='Mzz'; ext[3]='Mxy'; ext[4]='Mxz'; ext[5]='Myz'; 
@@ -323,6 +324,7 @@ def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=1,utm=0,nevent=1,ext=
     else:
       depth=cmt_par[6,k]; x=cmt_par[7,k];  y=cmt_par[8,k]  
     dnew=depth+ddepth; xnew=x+dlocation; ynew=y+dlocation # name holders again
+    print depth, ddepth, dnew
 
     # moment derivatives
     for i in range(0,6):
@@ -350,6 +352,7 @@ def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=1,utm=0,nevent=1,ext=
         cmt_par_out[6,k]=dnew
       else:
         cmt_par_out[6]=dnew
+      print cmt_file, cmt_par_out, npar_f
       if write_cmt(cmt_file,cmt_par_out,npar_f,cmt,utm=utm,nevent=nevent,scale_par=scale_par) != 0:
         print 'Error writing cmt file for depth, '; return 3
     if npar >= 9:

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# this is a modified version to accommodate data and synthetic processing for CEArray
+# data are already transfered and rotated to RTZ components
+
 # find matching data and synthetics from data and syn directories, process them
 # and write input to flexwin package
 # similar to Carl's process_data_and_syn.pl
@@ -39,7 +42,7 @@ def calc_snr(dfile):
   return(data_snr)
 ###########
 
-usage= 'Usage: process_ds.py\n        -d ddir,dext,chan -s sdir,sext,chan (required)\n        -p cmt,sta -t tmin,tmax -m -w -D (optional)\n\n        -m merge sac files from the same (sta,net,cmp,hole)\n        -w generate flexwin input\n       -D allow simultaneous processing of derivative synthetics \n        -r (for regional data) -M measure_dir\n'
+usage= 'Usage: process_ds_cea.py\n        -d ddir,dext,chan -s sdir,sext,chan (required)\n        -p cmt,sta -t tmin,tmax -m -w -D (optional)\n\n        -m merge sac files from the same (sta,net,cmp,hole)\n        -w generate flexwin input\n       -D allow simultaneous processing of derivative synthetics \n        -r (for regional data) -M measure_dir\n'
 
 preprocess=False; bandpass=False; merge=False; windowing=False; der_syn=False
 regional_data=False; model_name='global'; eps=0.001; pzdir=''; rot_reg='-d'; chan='LH'; synchan=chan; meas_dir='MEASURE'
@@ -132,7 +135,8 @@ data_list=[]; syn_list=[]; all_syn_list=[]; hole_list=[]; comp_list=[]
 
 print '**** Data/syn list for the same (sta,net,'+chan+'?,khole) ****'
 
-for dd in os.popen('saclst kstnm knetwk kcmpnm khole f '+datadir+'/*'+chan+'[ZEN12]*'+dataext+"| awk '{print $2,$3,$4,$5}' | sort -k 1 | uniq").readlines():
+# data are already given in terms of ZRT
+for dd in os.popen('saclst kstnm knetwk kcmpnm khole f '+datadir+'/*'+chan+'[ZRT]*'+dataext+"| awk '{print $2,$3,$4,$5}' | sort -k 1 | uniq").readlines():
   tmp=dd.split()
   if (len(tmp) > 3):
     [sta,net,cmp,hole]=tmp
@@ -140,9 +144,9 @@ for dd in os.popen('saclst kstnm knetwk kcmpnm khole f '+datadir+'/*'+chan+'[ZEN
       hole=''
   else:
     [sta,net,cmp]=tmp; hole=''
-  if (list(cmp)[2] == '1'):
+  if (list(cmp)[2] == 'R'):
     scmp=cmp[0:2]+'E'
-  elif (list(cmp)[2] == '2'):
+  elif (list(cmp)[2] == 'T'):
     scmp=cmp[0:2]+'N'
   else:
     scmp=cmp
@@ -201,7 +205,7 @@ if preprocess:
     sys.exit('Error pre-processing syn and padding synthetics')
 
 ########### cutting and band-passing data and synthetics #############
-cdata_list=[];
+cdata_list=[]
 if bandpass:
 
   print '**** cutting data and synthetics ****'
@@ -221,15 +225,15 @@ if bandpass:
       cdata_list.append(new_datadir+'/'+os.path.basename(data));
 
   # further band-pass filtering data and all syn
-  print '**** band-passing data and synthetics ****'
-  data_cmd= 'process_data_new.pl -l t3/t4 -d '+new_datadir+' -t '+tmin+'/'+tmax+' -i '+pzdir+' -f -s '+sps+' --model='+model_name
+  print '**** band-passing data (no need to transfer) and synthetics ****'
+  data_cmd= 'process_data_new.pl -l t3/t4 -d '+new_datadir+' -t '+tmin+'/'+tmax+' -s '+sps+' --model='+model_name
   print data_cmd+' data_files'
   error=os.system(data_cmd+' '+' '.join(data_list)+'>>'+outfile)
   if (error != 0):
     sys.exit('Error bandpass filtering data '+str(error1))
     
   f=open('syn.command','w')
-  syn_cmd='process_syn_new.pl -S -l t3/t4 -d '+new_syndir+' -t '+tmin+'/'+tmax+' -f -s '+sps+' --model='+model_name
+  syn_cmd='process_syn_new.pl -S -l t3/t4 -d '+new_syndir+' -t '+tmin+'/'+tmax+' -s '+sps+' --model='+model_name
   print syn_cmd+' all_syn_files'
   f.write(syn_cmd+' '+' '.join(all_syn_list)+'>>'+ outfile+'\n')
   f.close()
@@ -261,10 +265,10 @@ if windowing:
   for i in range(0,nfile):
     # flexwin input file
     [sta,net,cmp]=os.popen('saclst kstnm knetwk kcmpnm f '+cdata_list[i]).readline().split()[1:]
-    if (list(cmp)[2] == 'E' or list(cmp)[2] == '1'):
-      cmp=''.join(list(cmp[0:2])+['T'])
-    elif (list(cmp)[2] == 'N' or list(cmp)[2] == '2'):
-      cmp=''.join(list(cmp[0:2])+['R'])
+#    if (list(cmp)[2] == 'E' or list(cmp)[2] == '1'):
+#      cmp=''.join(list(cmp[0:2])+['T'])
+#    elif (list(cmp)[2] == 'N' or list(cmp)[2] == '2'):
+#      cmp=''.join(list(cmp[0:2])+['R'])
     if (not regional_data):
       new_data=glob.glob(new_datadir+'/*'+net+'.'+sta+'.'+hole_list[i]+'.'+cmp+'*'+dataext)
     else:

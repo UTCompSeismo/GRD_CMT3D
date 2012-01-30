@@ -42,7 +42,8 @@ program cmt3d_flexwin
         cmt_par(i) = hdur
      endif
   enddo
-  call rotate_cmt(cmt_par,utm_zone,utm_center_x,utm_center_y,1)
+  if (global_coord) call rotate_cmt(cmt_par,npar,elon,elat,1)
+
   ! data weights 
   print *, 'Compute weights associated with each window ...'
   call setup_data_weights
@@ -66,7 +67,8 @@ program cmt3d_flexwin
 ! write the new cmtsolution file
   print *
   print *, 'Write new cmt solution file ...'
-  call rotate_cmt(new_cmt_par,utm_zone,utm_center_x,utm_center_y,-1)
+  if (global_coord) call rotate_cmt(new_cmt_par,npar,elon,elat,-1)
+
   call write_new_cmtsolution(cmt_file,new_cmt_file,new_cmt_par)
 
 ! deallocate arrays and close files  
