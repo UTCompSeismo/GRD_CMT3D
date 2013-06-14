@@ -4,6 +4,7 @@ use GMT_PLOT;
 use GMT_PLOT_SC;
 use CMT_TOOLS;
 use POSIX;
+use List::Util qw[max];
 
 ## ok, this version includes both 2, 3 and 6 seconds measurements
 # parameter files
@@ -65,6 +66,7 @@ for ($k=2;$k<$nbeach;$k++) { # cmt3d runs
   print INV "${cmt}\n${cmt_new}\n$npars[$k]\n$delta$meas[$k]\n.true.\n$wdatas[$k]\n$scorrs[$k]\n$cons[$k]\n";
   if ($k==2) {print INV ".true.\n";}   else { print INV "${wns}\n";}
   close(INV);
+
   print BASH "# --- mech $k ----\n";
   print BASH "cp -f INVERSION.$k INVERSION.PAR\n";
   print BASH "cmt3d_flexwin > cmt3d.stdout\n";
@@ -76,12 +78,20 @@ for ($k=2;$k<$nbeach;$k++) { # cmt3d runs
   print BASH "mv -f INVERSION.$k $outdir\n";
 }
 close(BASH);
+
 system("chmod a+x mech_table.bash; mech_table.bash");
 for ($k=2;$k<$nbeach;$k++) {
   (@tmp)=split(" ",`grep Variance $outdir/cmt3d_stdout.$k`);
   $var[$k]=$tmp[8]; print "$k -- VR = $var[$k]\n";}
-#die("here\n");
 
+#die("here\n");
+# get depth information to display
+($odep)=split(" ",`cmtsol2faultpar.pl $cmt | grep mw | cut -d = -f 2 | cut -d / -f 2`);
+($ndep)=split(" ",`cmtsol2faultpar.pl $outdir/$cmt[2] | grep mw | cut -d = -f 2 | cut -d / -f 2`);
+($dep1)=split(" ",`cmtsol2faultpar.pl $outdir/$cmt[6] | grep mw | cut -d = -f 2 | cut -d / -f 2`);
+($dep2)=split(" ",`cmtsol2faultpar.pl $outdir/$cmt[7] | grep mw | cut -d = -f 2 | cut -d / -f 2`);
+($dep3)=split(" ",`cmtsol2faultpar.pl $outdir/$cmt[8] | grep mw | cut -d = -f 2 | cut -d / -f 2`);
+$ddep=sprintf("%5.2f",max(abs($dep1-$ndep),abs($dep2-$ndep),abs($dep3-$ndep)));
 
 open(BASH,">mech_plot.bash");
 print BASH "gmtset BASEMAP_TYPE plain ANOT_FONT_SIZE 9 HEADER_FONT_SIZE 10 MEASURE_UNIT inch PAPER_MEDIA letter TICK_LENGTH 0.1c\n";
@@ -97,8 +107,8 @@ for ($i=0;$i<$nrows;$i++) {
     if (-f "$outdir/$cmt[$k]") {
       plot_psmeca_raw(\*BASH,$psfile,"-JX -R -Sm1.0 ","1.5 2","$outdir/$cmt[$k]");
       @output = `cmtsol2faultpar.pl $outdir/$cmt[$k]`;
-      (undef,$tmp1) = split(" ", $output[4]);
-      (undef,$tmp2) = split(" ", $output[6]);
+      (undef,$tmp1) = split(" ", $output[5]);
+      (undef,$tmp2) = split(" ", $output[7]);
       ($s,$d,$r,$p,$t) = split(/\//,$tmp2);
       $tex="1 1 9 0 4 CM $names[$k]\n";
       $tex.="0.2 0.8 9 0 4 LM Mw/dep/eps/= $tmp1\n0.2 0.6 9 0 4 LM S/D/R= $s/$d/$r";
@@ -113,7 +123,7 @@ for ($i=0;$i<$nrows;$i++) {
      ($n3)  = split(" ",`grep 'T003.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
      ($n6)  = split(" ",`grep 'T006.*.sac.d' $meas[2] | wc | awk '{print \$1}'`);
 
-      plot_pstext(\*BASH,$psfile,"-JX -R  -N","1.5 4 12 0 4 CM $ename ($nz/$nr/$nt; $n2/$n3/$n6)");}
+      plot_pstext(\*BASH,$psfile,"-JX -R  -N","0.5 4 12 0 4 CM $ename ($nz/$nr/$nt; $n2/$n3/$n6; $odep/$ndep/$ddep)");}
     plot_psxy(\*BASH,$psfile,"-JX -X-$x -Y-$y","");
     $k++;
   }

@@ -287,6 +287,7 @@ def mij2dc(M):
 
 # ====================================
 # extension name array is just a name holder, the deriatives may differ from the names they are called.
+# dlocation mean different things for utm = 0, and utm in [1,60], and dlocation should be set to the same value as ddepth for utm=-1
 def gen_cmt_der(cmt,npar=9,dmoment=1e22,ddepth=1,dlocation=0.05,utm=0,nevent=1,ext=['Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','dep','lon','lat']):
 
  # ddepth and dlocation are in terms of kms  

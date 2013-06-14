@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# this is an old script used to copy and untar derivative syns,
+# copy measurement files, add up syns, change file extension,
+# copy inversion pars, figure out the dlat, dlon from CMTs.
 if [ $# != 1 ]; then
   echo "Usage: cp_syn.bash evid-file"; exit
 fi
