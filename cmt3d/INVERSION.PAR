@@ -1,7 +1,7 @@
 CMTSOLUTION
 CMTSOLUTION_NEW
-6   11  0.  0.                  -- npar[, utm_zone, utm_center_x,y]
-0.5 0.5  1.0e22             -- dX/Y(km),ddepth(km),dmoment(dyne.cm)
+6   .false.                  -- npar[, global_coord]
+0.5 0.5  1.0e22             -- dlocation,ddepth,dmoment(dyne.cm)
 flexwin.out
 .true. .false.                   -- weigh_data_files[, read_weight_from_file]
 2 2 1  0.5  1.15 0.55 0.78       -- weights of data comp, az(exp), dist(exp)

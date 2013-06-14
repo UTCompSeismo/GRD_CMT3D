@@ -15,26 +15,28 @@ contains
     
     character(len=*), intent(in) :: par_file
     integer ios
+    character(len=250) :: line
 
     open(IOPAR,file=par_file,status='old',iostat=ios)    
     if (ios /= 0) stop 'Error opening inversion parameter file'
 
     read(IOPAR,'(a)') cmt_file
     read(IOPAR,'(a)') new_cmt_file
-    read(IOPAR,'(i2)',iostat=ios,advance='no') npar
+    read(IOPAR,'(a)') line
+    read(line,*, iostat=ios) npar
     if (ios /= 0) stop 'Error reading npar'
-    global_coord=.false.
-
-    read(IOPAR,*,iostat=ios) global_coord
+    read(line(3:),*,iostat=ios) global_coord
+    ! if no global_coord specified
+    if (ios /= 0)  global_coord=.false.
     
-    if (.not. global_coord) then
+    if (.not. global_coord) then ! local coordinates (DEP, LON, LAT)
        par_name = (/'Mrr','Mtt','Mpp','Mrt','Mrp', 'Mtp','dep','lon','lat', &
             'ctm','hdr'/) 
        SCALE_PAR =  &
             (/ SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, SCALE_MOMENT, &
             SCALE_MOMENT, SCALE_MOMENT, SCALE_DEPTH, SCALE_DELTA, SCALE_DELTA, &
             SCALE_CTIME, SCALE_HDUR /)
-    else 
+    else  ! global coordinates (X, Y, Z)
        par_name = (/'Mxx','Myy','Mzz','Mxy','Mxz', 'Myz','xxx','yyy','zzz', &
             'ctm','hdr'/) 
        if (npar == 7) stop 'depth only inversion is not allowed in global coordinates'
@@ -45,18 +47,26 @@ contains
     endif
      
     read(IOPAR,*) ddelta,ddepth,dmoment
-    dcmt_par = (/dble(dmoment),dble(dmoment),dble(dmoment), &
-                 dble(dmoment),dble(dmoment),dble(dmoment),&
-                 dble(ddepth),dble(ddelta),dble(ddelta), &
-                 1.0d0, 1.0d0/) / SCALE_PAR
+    if (.not. global_coord) then
+       dcmt_par = (/dble(dmoment),dble(dmoment),dble(dmoment), &
+            dble(dmoment),dble(dmoment),dble(dmoment),&
+            dble(ddepth),dble(ddelta),dble(ddelta), &
+            1.0d0, 1.0d0/) / SCALE_PAR
+    else ! global code have different dcmt_par
+       dcmt_par = (/dble(dmoment),dble(dmoment),dble(dmoment), &
+            dble(dmoment),dble(dmoment),dble(dmoment),&
+            dble(ddepth),dble(ddepth),dble(ddepth), &
+            1.0d0, 1.0d0/) / SCALE_PAR
+    endif
 
     read(IOPAR,'(a)') flexwin_out_file
 
 ! now allow the possibility of reading in weights from input file
-    read(IOPAR,'(l7)',iostat=ios, advance='no') weigh_data_files
+    read(IOPAR, '(a)') line
+    read(line,*,iostat=ios) weigh_data_files
     if (ios /= 0) stop 'Error reading weigh_data_files'
 
-    read(IOPAR,'(l7)',iostat=ios) read_weight
+    read(line(8:),'(l7)',iostat=ios) read_weight
     if (ios /= 0) read_weight=.false.
     
 ! here we assume that Pnl wave window is the first window out 
@@ -162,8 +172,9 @@ contains
        endif
        do j = 1, nwins(i)
           if (read_weight) then
-            ! LQY: tjunk: time shift for data/syn within the window file
-            ! maybe used in the future to replace local corr subroutine
+            ! LQY: tjunk: time shift for data/syn within the window file is not 
+            ! used at this stage, 
+            ! it may be used in the future to replace local corr subroutine
             read(IOWIN,*,iostat=ios) tstart, tend, tjunk, data_weights(nwin_total+j)
             if (ios /= 0) stop 'ts, te, tshift, weight are expected!'
           else

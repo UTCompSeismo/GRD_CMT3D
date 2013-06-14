@@ -5,7 +5,7 @@ F77_FLAGS = -ffixed-line-length-132
 
 LIB = /opt/sac/lib/libsacio.a
 
-CMT_F90_SRC = get_cmt utm_geo \
+CMT_F90_SRC = get_cmt  \
     cmt3d_constants cmt3d_variables cmt3d_sub4 cmt3d_sub3 cmt3d_sub2 cmt3d_sub
 CMT_F77_SRC = cmt3d_utils distaz
 CMT_SRC = cmt3d_flexwin
