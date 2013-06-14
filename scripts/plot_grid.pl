@@ -12,7 +12,9 @@ if (@ARGV == 0 or @ARGV < 2) {die(" plot_grid.pl cmt_file grid-output-files \n")
 $cmt=$ARGV[0];
 if (not -f $cmt) {die("Check $cmt file\n");}
 (undef,undef,$ename)=split(" ",`grep 'event name' $cmt`);
-print "CMT file -- $ename\n";
+($sdr)=split(" ",`cmtsol2faultpar.pl $cmt | grep strike | awk '{print \$2}' | cut -d / -f 1-3`);
+($sdr2)=split(" ",`cmtsol2faultpar.pl $cmt | awk 'NR==9 {print \$2}' | cut -d / -f 1-3`);
+print "CMT file -- $ename ($sdr, $sdr2)\n";
 
 # this controls the paper orientation;
 $GMT_PLOT::paper_orient = "-P";
@@ -85,7 +87,7 @@ for ($k=1;$k<@ARGV;$k++) {
 
   print CSH "makecpt -T$min/$max/$db2 -Cseis -Z > temp.cpt \n";
 
-  plot_psxy(\*CSH,$psfile,"$JX -K -X0 -Y0","");
+  plot_psxy(\*CSH,$psfile,"$JX -R0/1/0/1 -K -X0 -Y0","");
 
   for ($i=0;$i<3;$i++) { #ij column
     for ($j=0;$j<$nrows;$j++) { #ii row
@@ -111,7 +113,7 @@ for ($k=1;$k<@ARGV;$k++) {
       print CSH "grdimage out.grd $R[$i] -JX $B -Ctemp.cpt -K -O -P >> $psfile \n";
       print CSH "grdcontour out.grd -R -JX -K -O -P $A>> $psfile\n";
       plot_pstext(\*CSH,$psfile,"-JX -W255 ","$pos[$i] 8 0 4 LT $name[$i]=$value");
-      if ($i==1 and $j==0) {plot_pstext(\*CSH,$psfile,"-JX -W255 -N","$pp 14 0 4 LT $ename");}
+      if ($i==1 and $j==0) {plot_pstext(\*CSH,$psfile,"-JX -W255 -N","$pp 14 0 4 LT $ename($sdr, $sdr2)");}
       plot_psxy(\*CSH,$psfile,"-JX -X-$x -Y-$y","");
       print CSH "\n";
     }

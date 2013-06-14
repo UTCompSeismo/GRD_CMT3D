@@ -230,7 +230,7 @@ for ($j=0;$j<$nplot;$j++) {
   plot_psxy(\*BASH,$psfile,"-JX -O","");
 } # end of each plot
 
-print BASH "ps2pdf.csh ds_??.ps\npdcat -r ds_??.pdf ds_all.pdf\n";
+print BASH "ps2pdf.bash ds_??.ps\npdcat -r ds_??.pdf ds_all.pdf\n";
 
 close(BASH);
 
