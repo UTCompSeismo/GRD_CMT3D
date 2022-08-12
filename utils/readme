@@ -1,0 +1,22 @@
+This is a collection of old utilities for various cmt3d related purposes (some modified basedon Jeroen's original code). Warning: they may not work out of the box, and they are uploaded as references for further integration and development.
+
+1. make_frechet_cmtsolutions: generate all the CMTs needed to compute source-side frechet derivative Greens function (Mij, dep, lat, lon)
+
+gfortran -O2 -o xmake_frechet_cmtsolutions make_frechet_cmtsolutions.f90
+
+2. add_frechet_moment_only[location]: this is a code that adds up all the frechet derivative Greens functions to generate a 'pseudo-synthetics' for a specific moment-tensor and maybe slightly changed location (latitude, longitude and depth). Note that if only moment-tensor derivatives are added up, the pseudo-synthetics will be exactly the same as the true synthetics. If more than 6 parameters are involved, the 'pseudo-synthetics' can be used to verify the numerical accuracy of the linear inversion algortithm. Note that this code needs to be updated to linked with your own ascii and sac I/O library.
+
+gfortran -O2 -o xadd_frechet_moment_location  add_frechet_moment_location.f90 get_cmt.f90 ...
+gfortran -O2 -o xadd_frechet_moment_only  add_frechet_moment_only.f90 get_cmt.f90 ...
+
+3. frechet_hdur: We have also attempted to computed the derivatives for half duration, which is related to a time derivative of the seismograms.
+
+gfortran -O2 -o xfrechet_hdur frechet_hdur.f90
+
+frechet_hdur.pl is a perl script that reads a list of syn files and outputs the half duration derivatives.
+
+4. launch_cmt3d_frechet.pl: a script I used in house to launch all the derivatives and track if the launched jobs are successfully launched. You need to adapt it to your own cluster.
+
+
+Qinya Liu
+2022/08/12
